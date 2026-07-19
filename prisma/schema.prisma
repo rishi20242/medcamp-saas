@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        String     @id @default(uuid())
+  name      String
+  createdAt DateTime   @default(now())
+  campaigns Campaign[]
+  staff     Staff[]
+}
+
+model Campaign {
+  id                    String       @id @default(uuid())
+  organizationId        String
+  organizingInstitution String
+  chiefOrganizer        String
+  campCode              String
+  department            String
+  date                  DateTime
+  status                String       @default("INITIALIZING")
+  organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patients              Patient[]
+}
+
+model Staff {
+  id             String         @id @default(uuid())
+  organizationId String?
+  name           String
+  designation    String
+  staffId        String         @unique
+  password       String
+  role           String         // "DOCTOR", "NURSE", "PHARMACIST"
+  organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  consultations  Consultation[]
+  triaged        Patient[]      @relation("TriageNurse")
+}
+
+model Patient {
+  id            String         @id @default(uuid())
+  campaignId    String
+  name          String
+  age           Int
+  gender        String
+  phone         String?
+  height        Float?
+  weight        Float?
+  bloodPressure String?
+  pulse         Int?
+  tokenNumber   Int
+  status             String         @default("REGISTERED")
+  triageNurseId      String?
+  allergies          String?
+  pastSurgeries      String?
+  currentMedications String?
+  
+  campaign      Campaign       @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  triageNurse   Staff?         @relation("TriageNurse", fields: [triageNurseId], references: [id])
+  consultations Consultation[]
+
+  @@unique([campaignId, tokenNumber])
+  @@unique([campaignId, phone])
+}
+
+model Consultation {
+  id            String  @id @default(uuid())
+  patientId     String
+  doctorId      String?
+  doctorName    String  // Kept for fallback/historical reference
+  symptoms      String
+  diagnosis     String
+  prescriptions String
+  
+  patient       Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctor        Staff?  @relation(fields: [doctorId], references: [id])
+}
