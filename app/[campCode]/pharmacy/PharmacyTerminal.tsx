@@ -74,7 +74,7 @@ export default function PharmacyCounter() {
   const allDispensed = prescriptions.length > 0 && prescriptions.every((_: any, i: number) => dispensedItems[i]);
 
   return (
-    <div className="flex flex-col h-[82vh] bg-white/60 backdrop-blur-xl border border-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.03)] max-w-7xl mx-auto overflow-hidden">
+    <div className="flex flex-col h-[82vh] bg-white/60 dark:bg-slate-950/80 backdrop-blur-xl border border-white dark:border-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.03)] max-w-7xl mx-auto overflow-hidden transition-colors">
       
       {/* Header */}
       <div className="bg-gradient-to-r from-violet-600 to-fuchsia-600 p-6 flex justify-between items-center shadow-md z-10 relative">
@@ -106,7 +106,7 @@ export default function PharmacyCounter() {
                 <div 
                   key={patient.id} 
                   onClick={() => handleSelectPatient(patient)}
-                  className={`group p-5 bg-white border ${selectedPatient?.id === patient.id ? 'border-violet-500 shadow-md shadow-violet-500/10' : 'border-slate-100'} rounded-2xl shadow-sm cursor-pointer hover:border-violet-300 hover:shadow-violet-500/10 transition-all duration-300 relative overflow-hidden`}
+                  className={`group p-5 bg-white dark:bg-slate-900 border ${selectedPatient?.id === patient.id ? 'border-violet-500 shadow-md shadow-violet-500/10' : 'border-slate-100 dark:border-slate-800'} rounded-2xl shadow-sm cursor-pointer hover:border-violet-300 hover:shadow-violet-500/10 transition-all duration-300 relative overflow-hidden`}
                 >
                   <div className={`absolute left-0 top-0 bottom-0 w-1 ${selectedPatient?.id === patient.id ? 'bg-violet-500' : 'bg-violet-400 transform -translate-x-full group-hover:translate-x-0'} transition-transform duration-300`}></div>
                   <div className="flex justify-between items-start mb-2">
@@ -129,9 +129,9 @@ export default function PharmacyCounter() {
         <div className="w-2/3 p-8 overflow-y-auto flex flex-col bg-white/40">
           {selectedPatient ? (
             <>
-              <div className="flex justify-between items-start mb-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="flex justify-between items-start mb-8 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors">
                 <div>
-                  <h3 className="text-4xl font-black text-slate-800 tracking-tight">#{selectedPatient.tokenNumber}</h3>
+                  <h3 className="text-4xl font-black text-slate-800 dark:text-slate-100 tracking-tight">#{selectedPatient.tokenNumber}</h3>
                   <p className="text-slate-500 font-medium mt-2 flex items-center gap-2">
                     <svg className="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                     {selectedPatient.name}
@@ -139,16 +139,16 @@ export default function PharmacyCounter() {
                 </div>
                 <div className="text-right">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Diagnosis</span>
-                  <span className="inline-block bg-slate-100 text-slate-700 px-3 py-1 rounded-lg font-bold text-sm">{latestConsultation?.diagnosis || "--"}</span>
+                  <span className="inline-block bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-lg font-bold text-sm">{latestConsultation?.diagnosis || "--"}</span>
                 </div>
               </div>
               
               <div className="flex-grow">
                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 ml-1">Prescription Details</h4>
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider">
+                      <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
                         <th className="p-4 font-bold">Medicine</th>
                         <th className="p-4 font-bold">Dosage</th>
                         <th className="p-4 font-bold">Duration</th>
@@ -164,10 +164,10 @@ export default function PharmacyCounter() {
                         prescriptions.map((med: any, index: number) => (
                           <tr key={index} className="hover:bg-slate-50/50 transition-colors">
                             <td className="p-4">
-                              <p className="font-bold text-slate-800">{med.name}</p>
+                              <p className="font-bold text-slate-800 dark:text-slate-200">{med.name}</p>
                             </td>
-                            <td className="p-4 text-slate-600 font-medium">{med.dosage}</td>
-                            <td className="p-4 text-slate-600 font-medium">{med.days} Days</td>
+                            <td className="p-4 text-slate-600 dark:text-slate-400 font-medium">{med.dosage}</td>
+                            <td className="p-4 text-slate-600 dark:text-slate-400 font-medium">{med.days} Days</td>
                             <td className="p-4 text-center">
                               <input 
                                 type="checkbox" 
@@ -189,7 +189,7 @@ export default function PharmacyCounter() {
                   onClick={handleCompleteDispensation}
                   disabled={isCompleting || (!allDispensed && prescriptions.length > 0)}
                   className={`w-full py-4 rounded-xl font-bold tracking-wide text-white flex justify-center items-center gap-2 transition-all duration-300 
-                    ${(!allDispensed && prescriptions.length > 0) ? 'bg-slate-300 cursor-not-allowed' : 'bg-slate-900 shadow-lg shadow-slate-900/20 hover:bg-violet-600 hover:shadow-violet-500/30 active:scale-[0.99]'} 
+                    ${(!allDispensed && prescriptions.length > 0) ? 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed text-slate-500 dark:text-slate-400' : 'bg-slate-900 shadow-lg shadow-slate-900/20 hover:bg-violet-600 hover:shadow-violet-500/30 active:scale-[0.99]'} 
                   `}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>

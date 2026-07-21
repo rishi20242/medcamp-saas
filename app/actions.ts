@@ -1,5 +1,5 @@
 "use server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
@@ -23,6 +23,7 @@ export async function seedStaffAccounts() {
 
 export async function loginAction(staffId: string, password: string) {
   await seedStaffAccounts(); // Ensure demo accounts exist
+  staffId = staffId.toUpperCase();
 
   if (!password || password.length < 8) {
     return { success: false, error: "Password must be at least 8 characters long." };
@@ -200,7 +201,7 @@ export async function closeAndWipeCampAction(campCode: string) {
 export async function provisionMidCampStaffAction(formData: FormData) {
   const name = formData.get("name") as string;
   const role = formData.get("role") as string;
-  const staffId = formData.get("staffId") as string;
+  const staffId = (formData.get("staffId") as string).toUpperCase();
   const password = formData.get("password") as string;
   const designation = formData.get("designation") as string;
   const campCode = formData.get("campCode") as string;

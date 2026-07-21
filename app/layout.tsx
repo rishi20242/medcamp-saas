@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import PatientNotification from "./components/PatientNotification";
 import Link from "next/link";
+import HeaderLogo from "./components/HeaderLogo";
 import { ThemeProvider } from "./ThemeProvider";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -16,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -29,7 +30,7 @@ export default function RootLayout({
         <header className="print:hidden sticky top-0 z-50 backdrop-blur-xl bg-white/70 dark:bg-black/70 border-b border-white/20 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <h1 className="text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">
-              <Link href="/">MedCamp.</Link>
+              <HeaderLogo />
             </h1>
             <nav className="hidden md:block">
               <ul className="flex space-x-8 text-sm font-semibold text-slate-600">

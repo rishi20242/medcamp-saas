@@ -17,28 +17,28 @@ export default async function DashboardLayout({ children, requiredRole }: { chil
 
   if (requiredRole && staff.role !== requiredRole) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-900">
-        <div className="text-center p-8 bg-white rounded-3xl shadow-xl max-w-md">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Access Denied</h2>
-          <p className="text-slate-600 mb-6">You do not have the required role ({requiredRole}) to view this page.</p>
-          <Link href="/login" className="bg-slate-900 text-white px-6 py-2 rounded-lg font-bold">Return to Login</Link>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+        <div className="text-center p-8 bg-white dark:bg-slate-900 rounded-3xl shadow-xl max-w-md border border-slate-200 dark:border-slate-800">
+          <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">Access Denied</h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">You do not have the required role ({requiredRole}) to view this page.</p>
+          <Link href="/login" className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white px-6 py-2 rounded-lg font-bold transition-colors">Return to Login</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col transition-colors">
       {/* Global Dashboard Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50 shadow-sm transition-colors">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
             </div>
-            <h1 className="font-extrabold text-slate-900 tracking-tight text-xl">MedCamp <span className="text-indigo-600">OS</span></h1>
+            <h1 className="font-extrabold text-slate-900 dark:text-white tracking-tight text-xl">MedCamp <span className="text-indigo-600 dark:text-indigo-400">OS</span></h1>
             {campaign && (
-              <span className="hidden md:inline-block ml-4 text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1 rounded-full uppercase tracking-widest border border-slate-200">
+              <span className="hidden md:inline-block ml-4 text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full uppercase tracking-widest border border-slate-200 dark:border-slate-700">
                 {campaign.organizingInstitution}
               </span>
             )}
@@ -46,10 +46,10 @@ export default async function DashboardLayout({ children, requiredRole }: { chil
 
           <div className="flex items-center gap-6">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-bold text-slate-900 leading-tight">{staff.name}</p>
-              <p className="text-xs font-medium text-slate-500">{staff.designation}</p>
+              <p className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">{staff.name}</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{staff.designation}</p>
             </div>
-            <div className="h-8 w-px bg-slate-200"></div>
+            <div className="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
             <LogoutButton />
           </div>
         </div>

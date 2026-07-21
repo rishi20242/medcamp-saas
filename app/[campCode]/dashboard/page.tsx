@@ -20,7 +20,7 @@ export default async function OrganizationDashboard({ params }: { params: { camp
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-['Outfit'] pb-20">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-['Outfit'] pb-20 transition-colors">
       
       {/* Premium Header */}
       <div className="bg-slate-900 pb-24 pt-8 px-6 lg:px-8">
@@ -62,33 +62,33 @@ export default async function OrganizationDashboard({ params }: { params: { camp
         
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <div className="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex items-center gap-5 hover:-translate-y-1 transition-transform duration-300">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-5 hover:-translate-y-1 transition-all duration-300">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
             </div>
             <div>
               <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Total Deployments</p>
-              <h3 className="text-3xl font-black text-slate-800">{org.campaigns.length}</h3>
+              <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{org.campaigns.length}</h3>
             </div>
           </div>
           
-          <div className="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex items-center gap-5 hover:-translate-y-1 transition-transform duration-300">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-5 hover:-translate-y-1 transition-all duration-300">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
             </div>
             <div>
               <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Registered Personnel</p>
-              <h3 className="text-3xl font-black text-slate-800">{org.staff.length}</h3>
+              <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{org.staff.length}</h3>
             </div>
           </div>
           
-          <div className="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex items-center gap-5 hover:-translate-y-1 transition-transform duration-300">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-5 hover:-translate-y-1 transition-all duration-300">
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center">
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
             </div>
             <div>
               <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Total Patients Treated</p>
-              <h3 className="text-3xl font-black text-slate-800">{totalPatients}</h3>
+              <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{totalPatients}</h3>
             </div>
           </div>
         </div>
@@ -96,9 +96,9 @@ export default async function OrganizationDashboard({ params }: { params: { camp
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           
           {/* Campaigns Table */}
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-              <h2 className="text-lg font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none overflow-hidden flex flex-col transition-colors">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
+              <h2 className="text-lg font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-2">
                 <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                 Deployment History
               </h2>
@@ -106,30 +106,30 @@ export default async function OrganizationDashboard({ params }: { params: { camp
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-white border-b border-slate-100 text-slate-400 text-[11px] font-bold uppercase tracking-widest">
+                  <tr className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 text-slate-400 text-[11px] font-bold uppercase tracking-widest">
                     <th className="p-4 pl-6">Code / Dept</th>
                     <th className="p-4">Date</th>
                     <th className="p-4">Patients</th>
                     <th className="p-4 pr-6 text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+                <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                   {org.campaigns.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="p-8 text-center text-slate-400 font-medium">No campaigns deployed yet.</td>
                     </tr>
                   ) : (
                     org.campaigns.map((camp: any) => (
-                      <tr key={camp.id} className="hover:bg-slate-50 transition-colors group">
+                      <tr key={camp.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                         <td className="p-4 pl-6">
-                          <p className="font-bold text-slate-800 mb-0.5">{camp.campCode}</p>
-                          <p className="text-xs text-slate-500 font-medium">{camp.department}</p>
+                          <p className="font-bold text-slate-800 dark:text-slate-200 mb-0.5">{camp.campCode}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{camp.department}</p>
                         </td>
-                        <td className="p-4 text-sm font-medium text-slate-600">
+                        <td className="p-4 text-sm font-medium text-slate-600 dark:text-slate-300">
                           {new Date(camp.date).toLocaleDateString()}
                         </td>
                         <td className="p-4">
-                          <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-md text-sm font-bold">
+                          <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-md text-sm font-bold">
                             {camp._count.patients}
                           </span>
                         </td>
@@ -140,7 +140,7 @@ export default async function OrganizationDashboard({ params }: { params: { camp
                               Active
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-500 border border-slate-200 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                            <span className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                               Completed
                             </span>
                           )}
@@ -155,9 +155,9 @@ export default async function OrganizationDashboard({ params }: { params: { camp
 
           {/* Staff Directory & Provisioning */}
           <div className="flex flex-col">
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
-              <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                <h2 className="text-lg font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none overflow-hidden flex flex-col transition-colors">
+              <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
+                <h2 className="text-lg font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-2">
                   <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                   Registered Personnel
                 </h2>
@@ -165,32 +165,32 @@ export default async function OrganizationDashboard({ params }: { params: { camp
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-white border-b border-slate-100 text-slate-400 text-[11px] font-bold uppercase tracking-widest">
+                  <tr className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 text-slate-400 text-[11px] font-bold uppercase tracking-widest">
                     <th className="p-4 pl-6">Name / Designation</th>
                     <th className="p-4">Staff ID</th>
                     <th className="p-4 pr-6 text-right">Role</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+                <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                   {org.staff.length === 0 ? (
                     <tr>
                       <td colSpan={3} className="p-8 text-center text-slate-400 font-medium">No personnel registered yet.</td>
                     </tr>
                   ) : (
                     org.staff.map((member: any) => (
-                      <tr key={member.id} className="hover:bg-slate-50 transition-colors">
+                      <tr key={member.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                         <td className="p-4 pl-6">
-                          <p className="font-bold text-slate-800 mb-0.5">{member.name}</p>
-                          <p className="text-xs text-slate-500 font-medium">{member.designation}</p>
+                          <p className="font-bold text-slate-800 dark:text-slate-200 mb-0.5">{member.name}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{member.designation}</p>
                         </td>
-                        <td className="p-4 text-sm font-bold text-indigo-600 font-mono">
+                        <td className="p-4 text-sm font-bold text-indigo-600 dark:text-indigo-400 font-mono uppercase">
                           {member.staffId}
                         </td>
                         <td className="p-4 pr-6 text-right">
                           <span className={`inline-block px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border
-                            ${member.role === 'DOCTOR' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : ''}
-                            ${member.role === 'NURSE' ? 'bg-amber-50 text-amber-600 border-amber-100' : ''}
-                            ${member.role === 'PHARMACIST' ? 'bg-violet-50 text-violet-600 border-violet-100' : ''}
+                            ${member.role === 'DOCTOR' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800' : ''}
+                            ${member.role === 'NURSE' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800' : ''}
+                            ${member.role === 'PHARMACIST' ? 'bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 border-violet-100 dark:border-violet-800' : ''}
                           `}>
                             {member.role}
                           </span>

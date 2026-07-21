@@ -49,6 +49,12 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    if (hasAllergies === null || hasSurgeries === null || hasMedications === null) {
+      alert("Please specify 'Yes' or 'No' for all Medical History questions before generating a token.");
+      return;
+    }
+
     setIsSubmitting(true);
     setDuplicateError(null);
     try {
@@ -133,8 +139,8 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
             <svg className="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
           </div>
           
-          <h2 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Registration Complete!</h2>
-          <p className="text-slate-500 mb-8 font-medium">Your camp token number is:</p>
+          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 tracking-tight">Registration Complete!</h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-8 font-medium">Your camp token number is:</p>
           
           <div className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-indigo-500 to-indigo-800 drop-shadow-sm mb-10">
             {submittedToken}
@@ -181,11 +187,11 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
   return (
     <div className="flex flex-col items-center justify-center min-h-[75vh] w-full max-w-2xl mx-auto py-12 px-4">
       <div className="text-center mb-10">
-        <h2 className="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">Patient Onboarding</h2>
-        <p className="text-slate-500 text-base">Complete your medical profile for faster consultation.</p>
+        <h2 className="text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-3 tracking-tight">Patient Onboarding</h2>
+        <p className="text-slate-500 dark:text-slate-400 text-base">Complete your medical profile for faster consultation.</p>
       </div>
 
-      <div className="w-full bg-white/80 backdrop-blur-xl shadow-[0_8px_40px_rgb(0,0,0,0.04)] rounded-[2rem] p-8 md:p-10 border border-white relative overflow-hidden">
+      <div className="w-full bg-white dark:bg-slate-900 shadow-[0_8px_40px_rgb(0,0,0,0.04)] dark:shadow-none rounded-[2rem] p-8 md:p-10 border border-slate-200 dark:border-slate-800 relative overflow-hidden transition-colors">
         {/* Subtle top gradient line */}
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
 
@@ -205,7 +211,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
           
           {/* Section 1: Personal Details */}
           <div>
-            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center">
               <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs mr-3">1</span>
               Personal Details
             </h3>
@@ -218,7 +224,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                   value={formData.firstName}
                   onChange={handleInputChange}
                   required
-                  className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm" 
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm" 
                   placeholder="Rahul" 
                 />
               </div>
@@ -229,7 +235,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm" 
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm" 
                   placeholder="Kumar" 
                 />
               </div>
@@ -242,7 +248,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                   value={formData.age}
                   onChange={handleInputChange}
                   required
-                  className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm" 
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm" 
                   placeholder="e.g. 34" 
                 />
               </div>
@@ -254,7 +260,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                     value={formData.gender}
                     onChange={handleInputChange}
                     required
-                    className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm"
                   >
                     <option value="" disabled>Select</option>
                     <option value="Male">Male</option>
@@ -277,7 +283,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                   required
                   pattern="[0-9]{10}"
                   maxLength={10}
-                  className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm" 
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all duration-300 shadow-sm" 
                   placeholder="10-digit number" 
                 />
               </div>
@@ -290,7 +296,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                   name="height"
                   value={formData.height}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all duration-300 shadow-sm" 
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all duration-300 shadow-sm" 
                   placeholder="e.g. 175" 
                 />
               </div>
@@ -301,7 +307,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                   name="weight"
                   value={formData.weight}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all duration-300 shadow-sm" 
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all duration-300 shadow-sm" 
                   placeholder="e.g. 70" 
                 />
               </div>
@@ -318,11 +324,11 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
             </div>
           </div>
 
-          <div className="h-px bg-slate-100 w-full"></div>
+          <div className="h-px bg-slate-100 dark:bg-slate-800 w-full"></div>
 
           {/* Section 2: Emergency Contact */}
           <div>
-            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center">
               <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs mr-3">2</span>
               Emergency Contact
             </h3>
@@ -334,7 +340,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                   name="contactName"
                   value={formData.contactName}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 focus:bg-white transition-all duration-300 shadow-sm" 
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 focus:bg-white transition-all duration-300 shadow-sm" 
                   placeholder="Guardian / Relative Name" 
                 />
               </div>
@@ -347,31 +353,31 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                   onChange={handleContactPhoneChange}
                   pattern="[0-9]{10}"
                   maxLength={10}
-                  className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 focus:bg-white transition-all duration-300 shadow-sm" 
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 focus:bg-white transition-all duration-300 shadow-sm" 
                   placeholder="10-digit number" 
                 />
               </div>
             </div>
           </div>
 
-          <div className="h-px bg-slate-100 w-full"></div>
+          <div className="h-px bg-slate-100 dark:bg-slate-800 w-full"></div>
 
           {/* Section 3: Medical History (Toggle UX) */}
           <div>
-            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center">
               <span className="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs mr-3">3</span>
               Medical History
             </h3>
             <div className="space-y-6">
               
               {/* Allergies Toggle */}
-              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <label className="font-bold text-slate-800 text-sm block">Any known allergies?</label>
+                    <label className="font-bold text-slate-800 dark:text-slate-100 text-sm block">Any known allergies?</label>
                     <span className="text-xs text-slate-500">Food, medications, environmental</span>
                   </div>
-                  <div className="flex bg-slate-200/60 p-1 rounded-xl w-fit">
+                  <div className="flex bg-slate-200/60 dark:bg-slate-700/60 p-1 rounded-xl w-fit">
                     <button 
                       type="button"
                       onClick={() => setHasAllergies(true)}
@@ -382,7 +388,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                     <button 
                       type="button"
                       onClick={() => { setHasAllergies(false); setFormData({...formData, allergies: ""}); }}
-                      className={`px-6 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${hasAllergies === false ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                      className={`px-6 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${hasAllergies === false ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                       No
                     </button>
@@ -395,7 +401,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                       name="allergies"
                       value={formData.allergies}
                       onChange={handleInputChange}
-                      className="w-full bg-white rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all shadow-sm" 
+                      className="w-full bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all shadow-sm" 
                       placeholder="Please specify your allergies..." 
                     />
                   </div>
@@ -403,13 +409,13 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
               </div>
 
               {/* Surgeries Toggle */}
-              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <label className="font-bold text-slate-800 text-sm block">Any past surgeries?</label>
+                    <label className="font-bold text-slate-800 dark:text-slate-100 text-sm block">Any past surgeries?</label>
                     <span className="text-xs text-slate-500">Major procedures or operations</span>
                   </div>
-                  <div className="flex bg-slate-200/60 p-1 rounded-xl w-fit">
+                  <div className="flex bg-slate-200/60 dark:bg-slate-700/60 p-1 rounded-xl w-fit">
                     <button 
                       type="button"
                       onClick={() => setHasSurgeries(true)}
@@ -420,7 +426,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                     <button 
                       type="button"
                       onClick={() => { setHasSurgeries(false); setFormData({...formData, surgeries: ""}); }}
-                      className={`px-6 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${hasSurgeries === false ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                      className={`px-6 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${hasSurgeries === false ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                       No
                     </button>
@@ -433,7 +439,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                       name="surgeries"
                       value={formData.surgeries}
                       onChange={handleInputChange}
-                      className="w-full bg-white rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all shadow-sm" 
+                      className="w-full bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all shadow-sm" 
                       placeholder="Please specify past surgeries..." 
                     />
                   </div>
@@ -441,13 +447,13 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
               </div>
 
               {/* Medications Toggle */}
-              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <label className="font-bold text-slate-800 text-sm block">Taking current medications?</label>
+                    <label className="font-bold text-slate-800 dark:text-slate-100 text-sm block">Taking current medications?</label>
                     <span className="text-xs text-slate-500">Prescription or over-the-counter</span>
                   </div>
-                  <div className="flex bg-slate-200/60 p-1 rounded-xl w-fit">
+                  <div className="flex bg-slate-200/60 dark:bg-slate-700/60 p-1 rounded-xl w-fit">
                     <button 
                       type="button"
                       onClick={() => setHasMedications(true)}
@@ -458,7 +464,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                     <button 
                       type="button"
                       onClick={() => { setHasMedications(false); setFormData({...formData, medications: ""}); }}
-                      className={`px-6 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${hasMedications === false ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                      className={`px-6 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${hasMedications === false ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                       No
                     </button>
@@ -471,7 +477,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                       name="medications"
                       value={formData.medications}
                       onChange={handleInputChange}
-                      className="w-full bg-white rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all shadow-sm" 
+                      className="w-full bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all shadow-sm" 
                       placeholder="Please list current medications..." 
                     />
                   </div>

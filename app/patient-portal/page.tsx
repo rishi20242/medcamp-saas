@@ -34,9 +34,8 @@ export default function PatientPortalPage() {
       }
 
       // Redirect to the actual report page (we can reuse the existing report view)
-      // The report route is `/[campCode]/report/[id]`
-      // Wait, we need to construct the URL with campCode.
-      router.push(`/${patient.campaign.campCode}/report/${patient.id}`);
+      // The report route is `/[campCode]/camp/report/[id]`
+      router.push(`/${patient.campaign.campCode}/camp/report/${patient.id}`);
       
     } catch (err) {
       setError("An error occurred while fetching your records.");
@@ -46,9 +45,9 @@ export default function PatientPortalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-['Outfit'] flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 font-['Outfit'] flex flex-col items-center justify-center p-4 transition-colors">
       
-      <div className="w-full max-w-lg bg-white shadow-2xl shadow-emerald-500/10 rounded-[2rem] p-10 border border-slate-100 relative overflow-hidden">
+      <div className="w-full max-w-lg bg-white dark:bg-slate-800 shadow-2xl shadow-emerald-500/10 rounded-[2rem] p-10 border border-slate-100 dark:border-slate-700 relative overflow-hidden transition-colors">
         
         {/* Decorative Header */}
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
@@ -62,8 +61,8 @@ export default function PatientPortalPage() {
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
         </div>
 
-        <h1 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Patient Portal</h1>
-        <p className="text-slate-500 mb-8 leading-relaxed">Retrieve your historical medical reports, diagnosis, and prescriptions from past camps.</p>
+        <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Patient Portal</h1>
+        <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">Retrieve your historical medical reports, diagnosis, and prescriptions from past camps.</p>
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm font-bold flex items-start gap-3">
@@ -81,31 +80,32 @@ export default function PatientPortalPage() {
               onChange={(e) => setCampCode(e.target.value.toUpperCase())}
               placeholder="e.g. CAMP-2026"
               required
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-slate-800 placeholder-slate-400 font-medium uppercase"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 font-medium uppercase"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Registered Phone Number</label>
+            <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Registered Phone Number</label>
             <input 
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+              maxLength={10}
               placeholder="e.g. 9876543210"
               required
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-slate-800 placeholder-slate-400 font-medium"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 font-medium"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Camp Token Number</label>
+            <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Camp Token Number</label>
             <input 
               type="number"
               value={token}
               onChange={(e) => setToken(e.target.value)}
               placeholder="e.g. 105"
               required
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-slate-800 placeholder-slate-400 font-medium"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 font-medium"
             />
           </div>
 

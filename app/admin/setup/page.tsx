@@ -67,15 +67,15 @@ export default function AdminSetupPage() {
 
   if (deployedCamp) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 relative text-center font-['Outfit']">
-        <div className="max-w-2xl w-full bg-slate-800 border border-slate-700 rounded-3xl p-12 shadow-2xl animate-in zoom-in-95 duration-500">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center p-4 relative text-center font-['Outfit'] transition-colors">
+        <div className="max-w-2xl w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-12 shadow-2xl animate-in zoom-in-95 duration-500">
           <div className="w-24 h-24 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
             <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
           </div>
-          <h2 className="text-4xl font-black text-white mb-2">Camp Deployed!</h2>
-          <p className="text-slate-400 font-medium mb-8 text-lg">Your medical camp infrastructure is now live.</p>
+          <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2">Camp Deployed!</h2>
+          <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 text-lg">Your medical camp infrastructure is now live.</p>
           
-          <div className="bg-slate-900/80 border border-slate-700 rounded-2xl p-8 mb-10 shadow-inner">
+          <div className="bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 mb-10 shadow-inner">
             <div className="flex flex-col items-center gap-4">
               <div className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-violet-400 tracking-tighter drop-shadow-sm">
                 {deployedCamp.campCode}
@@ -91,7 +91,7 @@ export default function AdminSetupPage() {
                 Copy Code
               </button>
             </div>
-            <p className="text-sm font-medium text-slate-400 mt-6 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 flex items-center justify-center gap-2">
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-6 bg-slate-100 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-center gap-2">
               <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
               Important: Distribute this code to your staff and patients.
             </p>
@@ -110,51 +110,51 @@ export default function AdminSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 py-12 relative font-['Outfit']">
-      <div className="max-w-4xl w-full bg-slate-800 border border-slate-700 rounded-3xl p-10 shadow-2xl">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center p-4 py-12 relative font-['Outfit'] transition-colors">
+      <div className="max-w-4xl w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-10 shadow-2xl">
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-500/30">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Welcome to MedCamp Organizer</h1>
-          <p className="text-slate-400 mt-2 font-medium">Configure active camp parameters & personnel</p>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Welcome to MedCamp Organizer</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Configure active camp parameters & personnel</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-10">
           
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white border-b border-slate-700 pb-2">Institution Details</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">Institution Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Organizing Hospital / Medical College <span className="text-red-400">*</span></label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Organizing Hospital / Medical College <span className="text-red-500 dark:text-red-400">*</span></label>
                 <input 
                   type="text" 
                   name="organizingInstitution"
                   required
                   placeholder="e.g. Apollo Medical College"
-                  className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Chief Organizer Name & Title <span className="text-red-400">*</span></label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Chief Organizer Name & Title <span className="text-red-500 dark:text-red-400">*</span></label>
                 <input 
                   type="text" 
                   name="chiefOrganizer"
                   required
                   placeholder="e.g. Dr. A. Sharma, Dean"
-                  className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Camp Department <span className="text-red-400">*</span></label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Camp Department <span className="text-red-500 dark:text-red-400">*</span></label>
                 <div className="relative">
                   <select 
                     name="department"
                     required
                     defaultValue="General Medicine"
-                    className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3.5 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
                   >
                     <option value="General Medicine">General Medicine</option>
                     <option value="Pediatrics">Pediatrics</option>
@@ -172,8 +172,8 @@ export default function AdminSetupPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="flex justify-between items-center border-b border-slate-700 pb-2">
-              <h2 className="text-xl font-bold text-white">Staff Onboarding</h2>
+            <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-2">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Staff Onboarding</h2>
               <button 
                 type="button" 
                 onClick={addStaffRow}
@@ -186,7 +186,7 @@ export default function AdminSetupPage() {
             
             <div className="space-y-4">
               {staffList.map((staff, idx) => (
-                <div key={idx} className="bg-slate-900/50 p-5 rounded-2xl border border-slate-700 relative">
+                <div key={idx} className="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 relative">
                   {staffList.length > 1 && (
                     <button 
                       type="button" 
@@ -199,11 +199,11 @@ export default function AdminSetupPage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Role</label>
+                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Role</label>
                       <select 
                         value={staff.role}
                         onChange={(e) => handleStaffChange(idx, "role", e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors"
                       >
                         <option value="DOCTOR">Doctor</option>
                         <option value="NURSE">Nurse</option>
@@ -211,23 +211,23 @@ export default function AdminSetupPage() {
                       </select>
                     </div>
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
+                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
                       <input 
                         type="text" 
                         required
                         value={staff.name}
                         onChange={(e) => handleStaffChange(idx, "name", e.target.value)}
                         placeholder="Dr. John Doe"
-                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors"
                       />
                     </div>
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Designation</label>
+                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Designation</label>
                       <select 
                         required
                         value={staff.designation}
                         onChange={(e) => handleStaffChange(idx, "designation", e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors"
                       >
                         <option value="" disabled>Select</option>
                         {staff.role === "DOCTOR" && (
@@ -256,25 +256,25 @@ export default function AdminSetupPage() {
                       </select>
                     </div>
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Staff ID</label>
+                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Staff ID</label>
                       <input 
                         type="text" 
                         required
                         value={staff.staffId}
                         onChange={(e) => handleStaffChange(idx, "staffId", e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
-                        placeholder="DOC01"
-                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        placeholder={staff.role === "DOCTOR" ? "DOC01" : staff.role === "NURSE" ? "NUR01" : "PHA01"}
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 uppercase transition-colors"
                       />
                     </div>
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
+                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
                       <input 
                         type="password" 
                         required
                         value={staff.password}
                         onChange={(e) => handleStaffChange(idx, "password", e.target.value)}
                         placeholder="Min 8 chars"
-                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors"
                       />
                     </div>
                   </div>
