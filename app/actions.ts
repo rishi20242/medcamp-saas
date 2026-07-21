@@ -310,22 +310,27 @@ export async function registerPatientAction(campCode: string, formData: FormData
 }
 
 export async function fetchHistoricalReportAction(campCode: string, phone: string, tokenNumber: number) {
-  const patient = await prisma.patient.findFirst({
-    where: { 
-      phone, 
-      tokenNumber,
-      campaign: {
-        campCode: campCode
+  try {
+    const patient = await prisma.patient.findFirst({
+      where: { 
+        phone, 
+        tokenNumber,
+        campaign: {
+          campCode: campCode
+        }
+      },
+      include: {
+        campaign: true,
+        consultations: true
       }
-    },
-    include: {
-      campaign: true,
-      consultations: true
-    }
-  });
-  
-  if (!patient) return null;
-  return JSON.parse(JSON.stringify(patient));
+    });
+    
+    if (!patient) return null;
+    return JSON.parse(JSON.stringify(patient));
+  } catch (err: any) {
+    console.error("fetchHistoricalReportAction error:", err);
+    throw new Error("Server error: " + err.message);
+  }
 }
 
 export async function fetchTriagePatient(campCode: string, tokenNumber: number) {

@@ -37,8 +37,9 @@ export default function PatientPortalPage() {
       // The report route is `/[campCode]/camp/report/[id]`
       router.push(`/${patient.campaign.campCode}/camp/report/${patient.id}`);
       
-    } catch (err) {
-      setError("An error occurred while fetching your records.");
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "An error occurred while fetching your records.");
     } finally {
       setLoading(false);
     }

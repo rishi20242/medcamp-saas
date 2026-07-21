@@ -15,7 +15,7 @@ export default function PatientNotification() {
       try {
         const data = await checkPatientStatusAction();
         if (data && data.status === "COMPLETED") {
-          const url = `/${data.campCode}/report/${data.patientId}`;
+          const url = `/${data.campCode}/camp/report/${data.patientId}`;
           if (pathname !== url) {
             setReportUrl(url);
             setReportReady(true);
@@ -35,7 +35,7 @@ export default function PatientNotification() {
   if (!reportReady) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-500">
+    <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-500 print:hidden">
       <div className="bg-white border border-emerald-200 shadow-2xl shadow-emerald-500/20 rounded-2xl p-5 w-80 relative overflow-hidden flex flex-col gap-3">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
         <button 

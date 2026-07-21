@@ -44,8 +44,14 @@ export default function ReportPage({ params }: { params: { id: string } }) {
   const campaign = patient.campaign;
 
   return (
-    <div className="min-h-screen bg-slate-100 py-8 print:bg-white print:py-0 font-sans text-slate-900">
-      <div className="max-w-3xl mx-auto bg-white p-10 shadow-2xl rounded-2xl print:shadow-none print:rounded-none print:p-0">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 py-8 print:bg-white dark:print:bg-white print:py-0 print:px-0 font-sans text-slate-900 transition-colors">
+      <style dangerouslySetInnerHTML={{__html: `
+        @media print {
+          @page { size: A4; margin: 0; }
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white !important; }
+        }
+      `}} />
+      <div className="max-w-3xl mx-auto bg-white p-10 print:p-12 shadow-2xl rounded-2xl print:shadow-none print:rounded-none print:max-w-none print:w-full print:m-0">
         
         {/* Header - Organizing Institution */}
         <div className="text-center border-b-2 border-indigo-600 pb-6 mb-8 relative">
@@ -65,14 +71,14 @@ export default function ReportPage({ params }: { params: { id: string } }) {
         </div>
 
         {/* Sub Header */}
-        <div className="flex justify-between items-center mb-10 bg-indigo-50/50 p-6 rounded-2xl print:bg-transparent print:p-0 print:mb-6 border border-indigo-100 print:border-none">
+        <div className="flex justify-between items-center mb-10 bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100">
           <div>
             <h2 className="text-2xl font-black text-indigo-700 uppercase tracking-wide">Patient Medical Report</h2>
             <p className="text-sm font-bold text-slate-500 mt-1">Token #{patient.tokenNumber}</p>
           </div>
           <div className="text-right">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Date Issued</p>
-            <p className="font-bold text-slate-800 text-lg">{new Date(campaign.date).toLocaleDateString()}</p>
+            <p className="font-bold text-slate-800 text-lg">{new Date().toLocaleDateString('en-GB')}</p>
           </div>
         </div>
 
@@ -87,7 +93,7 @@ export default function ReportPage({ params }: { params: { id: string } }) {
               {patient.phone || "Not Provided"}
             </p>
           </div>
-          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 print:border-slate-300 print:bg-transparent">
+          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
             <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4 border-b border-indigo-100 pb-2">Recorded Vitals</h3>
             <div className="grid grid-cols-2 gap-y-4 gap-x-2">
               <div>
@@ -107,11 +113,11 @@ export default function ReportPage({ params }: { params: { id: string } }) {
           <div className="mb-10">
             <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4 border-b border-indigo-100 pb-2">Clinical Details</h3>
             <div className="space-y-6">
-              <div className="bg-slate-50 p-5 rounded-2xl print:bg-transparent print:p-0 print:border-none border border-slate-100">
+              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Screening Notes / Symptoms</p>
                 <p className="text-slate-800 font-medium leading-relaxed">{consultation.symptoms || "None recorded"}</p>
               </div>
-              <div className="bg-indigo-50/50 p-5 rounded-2xl print:bg-transparent print:p-0 print:border-none border border-indigo-100">
+              <div className="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100">
                 <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Final Diagnosis</p>
                 <p className="text-xl font-bold text-indigo-900">{consultation.diagnosis}</p>
               </div>
@@ -123,9 +129,9 @@ export default function ReportPage({ params }: { params: { id: string } }) {
         <div className="mb-12">
           <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4 border-b border-indigo-100 pb-2">Prescription & Dispensation</h3>
           {prescriptions.length > 0 ? (
-            <div className="overflow-hidden rounded-2xl border border-slate-200 print:border-none">
+            <div className="overflow-hidden rounded-2xl border border-slate-200">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-slate-50 print:bg-transparent">
+                <thead className="bg-slate-50">
                   <tr>
                     <th className="py-4 px-5 font-black text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">Medicine</th>
                     <th className="py-4 px-5 font-black text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">Dosage</th>
@@ -134,9 +140,9 @@ export default function ReportPage({ params }: { params: { id: string } }) {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {prescriptions.map((med: any, idx: number) => (
-                    <tr key={idx} className="print:border-b print:border-slate-200">
+                    <tr key={idx}>
                       <td className="py-4 px-5 font-bold text-slate-800">{med.name}</td>
-                      <td className="py-4 px-5 text-slate-600 font-bold bg-slate-50/50 print:bg-transparent">{med.dosage}</td>
+                      <td className="py-4 px-5 text-slate-600 font-bold bg-slate-50/50">{med.dosage}</td>
                       <td className="py-4 px-5 text-slate-600 font-medium">{med.days} Days</td>
                     </tr>
                   ))}
@@ -165,7 +171,7 @@ export default function ReportPage({ params }: { params: { id: string } }) {
         <div className="mt-12 text-center print:hidden flex justify-center pb-8">
           <button 
             onClick={() => window.print()}
-            className="group flex items-center justify-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-600 transition-all duration-300 shadow-xl hover:shadow-indigo-500/30 active:scale-95 w-full sm:w-auto"
+            className="group flex items-center justify-center gap-3 bg-slate-900 dark:bg-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-600 dark:hover:bg-emerald-500 transition-all duration-300 shadow-xl hover:shadow-indigo-500/30 dark:hover:shadow-emerald-500/30 active:scale-95 w-full sm:w-auto"
           >
             <svg className="w-6 h-6 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
             Print Official Report

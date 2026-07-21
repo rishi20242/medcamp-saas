@@ -41,18 +41,17 @@ export default function PublicReportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 print:bg-white flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 print:bg-white dark:print:bg-white flex flex-col font-sans transition-colors">
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          @page { size: A4; margin: 10mm 12mm 10mm 12mm; }
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .no-print { display: none !important; }
+          @page { size: A4; margin: 0; }
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white !important; }
         }
       `}} />
       
       {/* Hide search interface during print */}
       <div className="print:hidden">
-        <header className="bg-indigo-600 text-white p-6 shadow-md text-center relative">
+        <header className="bg-indigo-600 dark:bg-indigo-900 text-white p-6 shadow-md text-center relative transition-colors">
           <Link href="/" className="absolute left-6 top-6 text-indigo-200 hover:text-white transition-colors flex items-center gap-2 font-medium">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
             Back Home
@@ -62,29 +61,29 @@ export default function PublicReportPage() {
         </header>
 
         <div className="max-w-xl mx-auto mt-10 p-4">
-          <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700 transition-colors">
             <form onSubmit={handleSearch} className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Camp Token ID</label>
+                <label className="block text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Camp Token ID</label>
                 <input 
                   type="text" 
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   placeholder="e.g. 101"
-                  className="w-full bg-slate-50 rounded-xl border border-slate-200 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all text-lg font-medium"
+                  className="w-full bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-600 px-4 py-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all text-lg font-medium"
                 />
               </div>
               <button 
                 type="submit" 
                 disabled={isSearching}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 transition-all disabled:opacity-70 text-lg"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none transition-all disabled:opacity-70 text-lg"
               >
                 {isSearching ? "Searching..." : "Fetch Medical Report"}
               </button>
             </form>
 
             {error && (
-              <div className="mt-6 p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl text-center font-medium">
+              <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/50 rounded-xl text-center font-medium transition-colors">
                 {error}
               </div>
             )}
@@ -96,7 +95,7 @@ export default function PublicReportPage() {
       {patientData && (
         <div className="max-w-4xl mx-auto w-full my-8 bg-white shadow-2xl print:shadow-none print:m-0 print:w-full print:max-w-none print:p-0 overflow-hidden relative break-inside-avoid">
           
-          <div className="p-8 md:p-12 print:p-8">
+          <div className="p-8 md:p-12 print:p-12">
             {/* Top Branding Matrix */}
             <div className="flex flex-col items-center justify-center border-b-2 border-slate-800 pb-4 mb-4 text-center">
               <h1 className="text-2xl font-extrabold tracking-wider text-slate-900 text-center uppercase mb-1">
@@ -236,7 +235,7 @@ export default function PublicReportPage() {
         <div className="print:hidden fixed bottom-8 right-8 z-50">
           <button 
             onClick={handlePrint}
-            className="bg-indigo-600 text-white p-5 rounded-full shadow-2xl hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all flex items-center justify-center border-4 border-white"
+            className="bg-indigo-600 dark:bg-emerald-600 text-white p-5 rounded-full shadow-2xl hover:bg-indigo-700 dark:hover:bg-emerald-500 hover:scale-105 active:scale-95 transition-all flex items-center justify-center border-4 border-white dark:border-slate-800"
             title="Download PDF / Print"
           >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
