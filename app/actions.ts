@@ -323,7 +323,9 @@ export async function fetchHistoricalReportAction(campCode: string, phone: strin
       consultations: true
     }
   });
-  return patient;
+  
+  if (!patient) return null;
+  return JSON.parse(JSON.stringify(patient));
 }
 
 export async function fetchTriagePatient(campCode: string, tokenNumber: number) {
