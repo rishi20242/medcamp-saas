@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { registerPatientAction, updatePatientAction } from "../../actions";
+import { useState, useEffect } from "react";
+import { registerPatientAction, updatePatientAction, clearPatientCookieAction, fetchPatientByCampTokenAction } from "../../actions";
 
 export default function RegisterClient({ campCode, initialPatient }: { campCode: string, initialPatient?: any }) {
   // Form State
@@ -9,6 +9,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
     lastName: "",
     age: "",
     gender: "",
+    bloodGroup: "",
     phone: "",
     contactName: "",
     contactPhone: "",
@@ -29,6 +30,33 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingPatientId, setEditingPatientId] = useState<string | null>(initialPatient ? initialPatient.id : null);
+
+  const [retrieveTokenStr, setRetrieveTokenStr] = useState("");
+  const [isRetrieving, setIsRetrieving] = useState(false);
+
+  useEffect(() => {
+    // 1. Trap Back Button (prevent navigating away if user hits back)
+    window.history.pushState(null, '', window.location.href);
+    const handlePopState = (e: PopStateEvent) => {
+      window.history.pushState(null, '', window.location.href);
+    };
+    window.addEventListener('popstate', handlePopState);
+
+    // 2. BeforeUnload Warning (Confirm form resubmission / data loss)
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      const isDirty = Object.values(formData).some(val => val.length > 0);
+      if (isDirty && !registeredPatient) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [formData, registeredPatient]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -97,6 +125,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
       lastName: nameParts.slice(1).join(" ") || "",
       age: patient.age.toString(),
       gender: patient.gender,
+      bloodGroup: patient.bloodGroup || "",
       phone: patient.phone || "",
       height: patient.height?.toString() || "",
       weight: patient.weight?.toString() || "",
@@ -167,12 +196,13 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
               Notice a mistake? Click here to edit your response
             </button>
             <button 
-              onClick={() => { 
+              onClick={async () => { 
+                await clearPatientCookieAction();
                 setSubmittedToken(null); 
                 setIsEditing(false);
                 setEditingPatientId(null);
                 setRegisteredPatient(null);
-                setFormData({firstName:"", lastName:"", age:"", gender:"", phone:"", contactName:"", contactPhone:"", height:"", weight:"", allergies:"", surgeries:"", medications:""}); 
+                setFormData({firstName:"", lastName:"", age:"", gender:"", bloodGroup:"", phone:"", contactName:"", contactPhone:"", height:"", weight:"", allergies:"", surgeries:"", medications:""}); 
               }}
               className="text-slate-500 font-bold hover:text-slate-800 transition-colors py-2"
             >
@@ -207,7 +237,7 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-8 mt-2">
+        <form onSubmit={handleSubmit} className="space-y-8 mt-2" autoComplete="off">
           
           {/* Section 1: Personal Details */}
           <div>
@@ -270,6 +300,22 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </div>
+                </div>
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Blood Group</label>
+                <div className="flex flex-wrap gap-2">
+                  {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"].map((bg) => (
+                    <button
+                      key={bg}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, bloodGroup: bg })}
+                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 border ${formData.bloodGroup === bg ? 'bg-indigo-600 text-white border-indigo-600 shadow-md scale-105' : 'bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-900 hover:border-indigo-200'}`}
+                    >
+                      {bg}
+                    </button>
+                  ))}
+                  <input type="hidden" name="bloodGroup" value={formData.bloodGroup} />
                 </div>
               </div>
               
@@ -496,6 +542,61 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
             {!isSubmitting && !isEditing && <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>}
           </button>
         </form>
+
+        {!registeredPatient && (
+          <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col items-center">
+            <p className="text-sm font-bold text-slate-500 mb-3">Wanna change the info? Please enter your token number</p>
+            <div className="flex gap-2">
+              <input 
+                type="number"
+                value={retrieveTokenStr}
+                onChange={(e) => setRetrieveTokenStr(e.target.value)}
+                placeholder="Token #"
+                className="w-24 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-center focus:outline-none focus:border-indigo-500 text-slate-900 dark:text-slate-100 font-bold"
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!retrieveTokenStr) return;
+                  setIsRetrieving(true);
+                  const res = await fetchPatientByCampTokenAction(campCode, parseInt(retrieveTokenStr));
+                  if (res.success && res.patient) {
+                     const patient = res.patient;
+                     const nameParts = patient.name.split(" ");
+                     setFormData({
+                       firstName: nameParts[0] || "",
+                       lastName: nameParts.slice(1).join(" ") || "",
+                       age: patient.age.toString(),
+                       gender: patient.gender,
+                       bloodGroup: patient.bloodGroup || "",
+                       phone: patient.phone || "",
+                       contactName: patient.contactName || "",
+                       contactPhone: patient.contactPhone || "",
+                       height: patient.height?.toString() || "",
+                       weight: patient.weight?.toString() || "",
+                       allergies: patient.allergies || "",
+                       surgeries: patient.surgeries || "",
+                       medications: patient.medications || ""
+                     });
+                     setHasAllergies(!!patient.allergies);
+                     setHasSurgeries(!!patient.surgeries);
+                     setHasMedications(!!patient.medications);
+                     setIsEditing(true);
+                     setEditingPatientId(patient.id);
+                     setRetrieveTokenStr("");
+                  } else {
+                     alert("Token not found for this camp.");
+                  }
+                  setIsRetrieving(false);
+                }}
+                disabled={isRetrieving}
+                className="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800 font-bold px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                {isRetrieving ? "..." : "Retrieve"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

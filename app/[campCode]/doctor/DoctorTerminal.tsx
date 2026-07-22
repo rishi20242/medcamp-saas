@@ -143,7 +143,7 @@ export default function DoctorTerminal() {
                   <span className="font-bold text-slate-800 dark:text-slate-100 tracking-tight">Token #{patient.tokenNumber}</span>
                   <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded-full border border-emerald-100 dark:border-emerald-800">Waiting</span>
                 </div>
-                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{patient.name} &bull; {patient.age} Yrs &bull; {patient.gender.charAt(0)}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{patient.name} &bull; {patient.age} Yrs &bull; {patient.gender.charAt(0)} {patient.bloodGroup ? `\u2022 ${patient.bloodGroup}` : ""}</p>
               </div>
             ))
           )}
@@ -159,7 +159,7 @@ export default function DoctorTerminal() {
                 <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-1">Token #{selectedPatient.tokenNumber}</h2>
                 <p className="text-slate-500 dark:text-slate-400 font-medium text-sm flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                  {selectedPatient.name} &bull; {selectedPatient.age} Yrs &bull; {selectedPatient.gender}
+                  {selectedPatient.name} &bull; {selectedPatient.age} Yrs &bull; {selectedPatient.gender} {selectedPatient.bloodGroup ? `\u2022 Blood: ${selectedPatient.bloodGroup}` : ""}
                 </p>
               </div>
             </div>

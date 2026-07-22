@@ -10,9 +10,13 @@ export default async function RegisterPageServer({ params }: { params: { campCod
 
   let initialPatient = null;
   if (patientId) {
-    initialPatient = await prisma.patient.findUnique({
-      where: { id: patientId }
+    const pt = await prisma.patient.findUnique({
+      where: { id: patientId },
+      include: { campaign: true }
     });
+    if (pt && pt.campaign.campCode === params.campCode) {
+      initialPatient = pt;
+    }
   }
 
   return <RegisterClient campCode={params.campCode} initialPatient={initialPatient} />;

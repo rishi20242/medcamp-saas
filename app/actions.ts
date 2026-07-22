@@ -288,6 +288,7 @@ export async function registerPatientAction(campCode: string, formData: FormData
         phone,
         height: formData.get("height") ? parseFloat(formData.get("height") as string) : null,
         weight: formData.get("weight") ? parseFloat(formData.get("weight") as string) : null,
+        bloodGroup: formData.get("bloodGroup") as string || null,
         allergies: formData.get("allergies") as string || null,
         pastSurgeries: formData.get("surgeries") as string || null,
         currentMedications: formData.get("medications") as string || null,
@@ -302,11 +303,32 @@ export async function registerPatientAction(campCode: string, formData: FormData
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7 // 1 week
+    maxAge: 60 * 60 * 24 // 24 hours
   });
 
   revalidatePath(`/${campCode}/register`);
   return { success: true, tokenNumber: newPatient.tokenNumber, patient: newPatient };
+}
+
+export async function clearPatientCookieAction() {
+  cookies().delete("patientId");
+}
+
+export async function fetchPatientByCampTokenAction(campCode: string, tokenNumber: number) {
+  try {
+    const patient = await prisma.patient.findFirst({
+      where: {
+        tokenNumber,
+        campaign: { campCode }
+      },
+      include: {
+        consultations: true,
+      }
+    });
+    return { success: !!patient, patient };
+  } catch (error) {
+    return { success: false, error: "Database error." };
+  }
 }
 
 export async function fetchHistoricalReportAction(campCode: string, phone: string, tokenNumber: number) {
@@ -487,6 +509,7 @@ export async function updatePatientAction(patientId: string, formData: FormData)
       phone: formData.get("phone") as string || null,
       height: formData.get("height") ? parseFloat(formData.get("height") as string) : null,
       weight: formData.get("weight") ? parseFloat(formData.get("weight") as string) : null,
+      bloodGroup: formData.get("bloodGroup") as string || null,
       allergies: formData.get("allergies") as string || null,
       pastSurgeries: formData.get("surgeries") as string || null,
       currentMedications: formData.get("medications") as string || null,

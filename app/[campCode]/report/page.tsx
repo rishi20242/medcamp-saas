@@ -114,7 +114,7 @@ export default function PublicReportPage() {
               <div className="bg-slate-50 p-2 flex flex-col justify-center items-center text-center">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Patient Info</span>
                 <span className="font-black text-slate-800 text-sm leading-tight">{patientData.name}</span>
-                <span className="text-[10px] font-bold text-slate-500">{patientData.age} Yrs &bull; {patientData.gender}</span>
+                <span className="text-[10px] font-bold text-slate-500">{patientData.age} Yrs &bull; {patientData.gender} {patientData.bloodGroup ? `\u2022 ${patientData.bloodGroup}` : ""}</span>
               </div>
               <div className="bg-slate-50 p-2 flex flex-col justify-center items-center text-center">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Blood Pressure</span>

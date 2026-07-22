@@ -127,7 +127,7 @@ export default function NurseTriageTerminal() {
                   <span className="bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400 text-xs font-bold px-2 py-1 rounded-lg">#{p.tokenNumber}</span>
                 </div>
                 <div className="text-sm text-slate-500 dark:text-slate-400">
-                  {p.age} Yrs &bull; {p.gender} &bull; {p.phone || "No Phone"}
+                  {p.age} Yrs &bull; {p.gender} {p.bloodGroup ? `\u2022 ${p.bloodGroup}` : ""} &bull; {p.phone || "No Phone"}
                 </div>
               </div>
             ))
@@ -193,7 +193,7 @@ export default function NurseTriageTerminal() {
                       <span className="text-amber-500">#{patientData.tokenNumber}</span>
                       {patientData.name}
                     </h3>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">{patientData.age} Yrs &bull; {patientData.gender} &bull; General Checkup</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">{patientData.age} Yrs &bull; {patientData.gender} {patientData.bloodGroup ? `\u2022 Blood: ${patientData.bloodGroup}` : ""} &bull; General Checkup</p>
                   </div>
                   <div className="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-4 py-1.5 rounded-full text-sm font-bold border border-amber-200 dark:border-amber-700">
                     Status: {patientData.status}

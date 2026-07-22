@@ -47,6 +47,7 @@ model Patient {
   name          String
   age           Int
   gender        String
+  bloodGroup    String?
   phone         String?
   height        Float?
   weight        Float?
