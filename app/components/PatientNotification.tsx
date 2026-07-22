@@ -9,7 +9,13 @@ export default function PatientNotification() {
   const [reportUrl, setReportUrl] = useState("");
   const pathname = usePathname();
 
+  // ONLY poll and show notification if we are on the registration page
+  const isRegistrationPage = pathname?.endsWith("/register");
+
   useEffect(() => {
+    // Only poll if we are on the registration page
+    if (!isRegistrationPage) return;
+
     // Poll every 10 seconds
     const interval = setInterval(async () => {
       try {
@@ -30,9 +36,9 @@ export default function PatientNotification() {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [pathname]);
+  }, [pathname, isRegistrationPage]);
 
-  if (!reportReady) return null;
+  if (!isRegistrationPage || !reportReady) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-500 print:hidden">
