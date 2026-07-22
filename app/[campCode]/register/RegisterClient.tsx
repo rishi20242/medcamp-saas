@@ -129,8 +129,8 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
       phone: patient.phone || "",
       height: patient.height?.toString() || "",
       weight: patient.weight?.toString() || "",
-      contactName: patient.contactName || "",
-      contactPhone: patient.contactPhone || "",
+      contactName: (patient as any).contactName || "",
+      contactPhone: (patient as any).contactPhone || "",
     });
     setIsEditing(true);
     setEditingPatientId(patient.id);
@@ -150,8 +150,8 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
       phone: registeredPatient.phone || "",
       height: registeredPatient.height?.toString() || "",
       weight: registeredPatient.weight?.toString() || "",
-      contactName: registeredPatient.contactName || "",
-      contactPhone: registeredPatient.contactPhone || "",
+      contactName: (registeredPatient as any).contactName || "",
+      contactPhone: (registeredPatient as any).contactPhone || "",
     });
     setIsEditing(true);
     setEditingPatientId(registeredPatient.id);
@@ -570,17 +570,17 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
                        gender: patient.gender,
                        bloodGroup: patient.bloodGroup || "",
                        phone: patient.phone || "",
-                       contactName: patient.contactName || "",
-                       contactPhone: patient.contactPhone || "",
+                       contactName: (patient as any).contactName || "",
+                       contactPhone: (patient as any).contactPhone || "",
                        height: patient.height?.toString() || "",
                        weight: patient.weight?.toString() || "",
                        allergies: patient.allergies || "",
-                       surgeries: patient.surgeries || "",
-                       medications: patient.medications || ""
+                       surgeries: patient.pastSurgeries || "",
+                       medications: patient.currentMedications || ""
                      });
                      setHasAllergies(!!patient.allergies);
-                     setHasSurgeries(!!patient.surgeries);
-                     setHasMedications(!!patient.medications);
+                     setHasSurgeries(!!patient.pastSurgeries);
+                     setHasMedications(!!patient.currentMedications);
                      setIsEditing(true);
                      setEditingPatientId(patient.id);
                      setRetrieveTokenStr("");
