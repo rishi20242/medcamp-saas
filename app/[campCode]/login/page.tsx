@@ -18,7 +18,7 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
 
-    const result = await loginAction(staffId, password);
+    const result = await loginAction(staffId, password, campCode);
     if (result.success) {
       if (result.role === "DOCTOR") router.push(`/${campCode}/doctor`);
       else if (result.role === "NURSE") router.push(`/${campCode}/nurse`);

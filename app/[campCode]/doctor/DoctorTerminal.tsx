@@ -13,8 +13,10 @@ export default function DoctorTerminal() {
   
   // Prescription State
   const [prescriptions, setPrescriptions] = useState<{name: string, dosage: string, days: string}[]>([]);
+  const [newType, setNewType] = useState<"Tablet" | "Liquid">("Tablet");
   const [newDrug, setNewDrug] = useState("");
   const [newDosage, setNewDosage] = useState("");
+  const [newVolume, setNewVolume] = useState("");
   const [newDays, setNewDays] = useState("");
 
   const [snippets, setSnippets] = useState<string[]>(["Viral Fever", "Common Cold", "URTI", "Hypertension", "Gastroenteritis"]);
@@ -75,9 +77,20 @@ export default function DoctorTerminal() {
         alert("Dosage is required before adding a prescription.");
         return;
       }
-      setPrescriptions([...prescriptions, { name: newDrug, dosage: newDosage, days: newDays }]);
+      
+      let finalName = newDrug;
+      if (newType === "Liquid") {
+        if (!newVolume || newVolume.trim() === "") {
+          alert("Volume (mL) is required for Liquid medicine.");
+          return;
+        }
+        finalName = `${newDrug} - ${newVolume} mL`;
+      }
+      
+      setPrescriptions([...prescriptions, { name: finalName, dosage: newDosage, days: newDays }]);
       setNewDrug("");
       setNewDosage("");
+      setNewVolume("");
       setNewDays("");
     }
   };
@@ -141,7 +154,11 @@ export default function DoctorTerminal() {
                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${selectedPatient?.id === patient.id ? 'bg-emerald-500' : 'bg-emerald-400 transform -translate-x-full group-hover:translate-x-0'} transition-transform duration-300`}></div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-bold text-slate-800 dark:text-slate-100 tracking-tight">Token #{patient.tokenNumber}</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded-full border border-emerald-100 dark:border-emerald-800">Waiting</span>
+                  {patient.status === "DOCTOR_REFERRED_OUT_OF_STOCK" ? (
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded-full border border-red-100 dark:border-red-800">Out of Stock</span>
+                  ) : (
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded-full border border-emerald-100 dark:border-emerald-800">Waiting</span>
+                  )}
                 </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{patient.name} &bull; {patient.age} Yrs &bull; {patient.gender.charAt(0)} {patient.bloodGroup ? `\u2022 ${patient.bloodGroup}` : ""}</p>
               </div>
@@ -156,13 +173,30 @@ export default function DoctorTerminal() {
           <>
             <div className="p-8 border-b border-slate-100 dark:border-slate-700 bg-white/40 dark:bg-slate-900/80 flex justify-between items-center transition-colors">
               <div>
-                <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-1">Token #{selectedPatient.tokenNumber}</h2>
+                <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-1">
+                  Token #{selectedPatient.tokenNumber}
+                  {selectedPatient.status === "DOCTOR_REFERRED_OUT_OF_STOCK" && (
+                    <span className="ml-3 text-sm inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">
+                      🚨 Out of Stock - Requires Alternate Prescription
+                    </span>
+                  )}
+                </h2>
                 <p className="text-slate-500 dark:text-slate-400 font-medium text-sm flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                   {selectedPatient.name} &bull; {selectedPatient.age} Yrs &bull; {selectedPatient.gender} {selectedPatient.bloodGroup ? `\u2022 Blood: ${selectedPatient.bloodGroup}` : ""}
                 </p>
               </div>
             </div>
+
+            {selectedPatient.status === "DOCTOR_REFERRED_OUT_OF_STOCK" && selectedPatient.outOfStockNote && (
+              <div className="mx-8 mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex gap-3 items-start">
+                <svg className="w-6 h-6 text-red-600 dark:text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div>
+                  <p className="text-sm font-bold text-red-800 dark:text-red-300">Pharmacist Note:</p>
+                  <p className="text-sm text-red-700 dark:text-red-400 mt-1">{selectedPatient.outOfStockNote}</p>
+                </div>
+              </div>
+            )}
             
             <div className="p-8 overflow-y-auto flex-grow space-y-8">
               
@@ -313,7 +347,15 @@ export default function DoctorTerminal() {
                   <span className="text-[10px] bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-full font-normal normal-case">Integrated Pharmacy DB</span>
                 </label>
                 <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-4 transition-colors">
-                  <form onSubmit={handleAddPrescription} className="flex space-x-3">
+                  <form onSubmit={handleAddPrescription} className="flex flex-wrap gap-3">
+                    <select
+                      value={newType}
+                      onChange={(e) => setNewType(e.target.value as "Tablet" | "Liquid")}
+                      className="rounded-xl border-none ring-1 ring-slate-200 dark:ring-slate-700 p-3 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all text-sm shadow-sm text-slate-700 dark:text-slate-200"
+                    >
+                      <option value="Tablet">Tablet</option>
+                      <option value="Liquid">Liquid</option>
+                    </select>
                     {!showCustomDrug ? (
                       <select
                         value={newDrug}
@@ -340,6 +382,16 @@ export default function DoctorTerminal() {
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
                     </button>
+                    {newType === "Liquid" && (
+                      <input 
+                        type="text" 
+                        value={newVolume}
+                        onChange={(e) => setNewVolume(e.target.value)}
+                        className="w-24 rounded-xl border-none ring-1 ring-slate-200 dark:ring-slate-700 p-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all text-sm shadow-sm placeholder:text-red-300 dark:placeholder:text-red-400" 
+                        placeholder="Vol (mL) *" 
+                        required
+                      />
+                    )}
                     <input 
                       type="text" 
                       value={newDosage}

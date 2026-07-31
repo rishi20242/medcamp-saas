@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { registerPatientAction, updatePatientAction, clearPatientCookieAction, fetchPatientByCampTokenAction } from "../../actions";
 
-export default function RegisterClient({ campCode, initialPatient }: { campCode: string, initialPatient?: any }) {
+export default function RegisterClient({ campCode, initialPatient, accessGranted }: { campCode: string, initialPatient?: any, accessGranted?: boolean }) {
   // Form State
   const [formData, setFormData] = useState({
     firstName: "",
@@ -35,6 +35,11 @@ export default function RegisterClient({ campCode, initialPatient }: { campCode:
   const [isRetrieving, setIsRetrieving] = useState(false);
 
   useEffect(() => {
+    // Set access cookie if granted
+    if (accessGranted) {
+      document.cookie = `access_${campCode}=granted; max-age=86400; path=/`;
+    }
+
     // 1. Trap Back Button (prevent navigating away if user hits back)
     window.history.pushState(null, '', window.location.href);
     const handlePopState = (e: PopStateEvent) => {

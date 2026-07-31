@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { fetchPharmacyQueue, completeDispensationAction } from "../../actions";
+import { fetchPharmacyQueue, completeDispensationAction, markOutOfStockAction } from "../../actions";
 import { useParams } from "next/navigation";
 
 export default function PharmacyCounter() {
@@ -62,6 +62,27 @@ export default function PharmacyCounter() {
     } catch (error) {
       console.error(error);
       alert("Failed to complete dispensation.");
+    } finally {
+      setIsCompleting(false);
+    }
+  };
+
+  const handleOutOfStock = async () => {
+    if (!selectedPatient) return;
+
+    const note = window.prompt("Optional: Enter a reason or suggested alternative for the doctor:");
+    if (note === null) return; // User cancelled
+
+    setIsCompleting(true);
+    try {
+      await markOutOfStockAction(selectedPatient.id, note);
+      alert("Patient referred back to Doctor for alternate prescription.");
+      setSelectedPatient(null);
+      setDispensedItems({});
+      await loadQueue();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to mark out of stock.");
     } finally {
       setIsCompleting(false);
     }
@@ -184,12 +205,20 @@ export default function PharmacyCounter() {
                 </div>
               </div>
               
-              <div className="mt-8 pt-6 border-t border-slate-200">
+              <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex gap-4">
+                <button 
+                  onClick={handleOutOfStock}
+                  disabled={isCompleting}
+                  className="flex-1 py-4 rounded-xl font-bold tracking-wide text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 border border-red-200 dark:border-red-800 transition-all duration-300 flex justify-center items-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                  Report Out of Stock
+                </button>
                 <button 
                   onClick={handleCompleteDispensation}
                   disabled={isCompleting || (!allDispensed && prescriptions.length > 0)}
-                  className={`w-full py-4 rounded-xl font-bold tracking-wide text-white flex justify-center items-center gap-2 transition-all duration-300 
-                    ${(!allDispensed && prescriptions.length > 0) ? 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed text-slate-500 dark:text-slate-400' : 'bg-slate-900 shadow-lg shadow-slate-900/20 hover:bg-violet-600 hover:shadow-violet-500/30 active:scale-[0.99]'} 
+                  className={`flex-1 py-4 rounded-xl font-bold tracking-wide text-white flex justify-center items-center gap-2 transition-all duration-300 
+                    ${(!allDispensed && prescriptions.length > 0) ? 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed text-slate-500 dark:text-slate-400' : 'bg-slate-900 dark:bg-slate-700 shadow-lg shadow-slate-900/20 hover:bg-violet-600 hover:shadow-violet-500/30 active:scale-[0.99]'} 
                   `}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>

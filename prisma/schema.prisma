@@ -21,6 +21,7 @@ model Campaign {
   organizingInstitution String
   chiefOrganizer        String
   campCode              String
+  slugToken             String       @unique @default(uuid())
   department            String
   date                  DateTime
   status                String       @default("INITIALIZING")
@@ -31,14 +32,17 @@ model Campaign {
 model Staff {
   id             String         @id @default(uuid())
   organizationId String?
+  deploymentId   String
   name           String
   designation    String
-  staffId        String         @unique
+  staffId        String         
   password       String
   role           String         // "DOCTOR", "NURSE", "PHARMACIST"
   organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   consultations  Consultation[]
   triaged        Patient[]      @relation("TriageNurse")
+
+  @@unique([deploymentId, staffId])
 }
 
 model Patient {
@@ -59,6 +63,7 @@ model Patient {
   allergies          String?
   pastSurgeries      String?
   currentMedications String?
+  outOfStockNote     String?
   
   campaign      Campaign       @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   triageNurse   Staff?         @relation("TriageNurse", fields: [triageNurseId], references: [id])

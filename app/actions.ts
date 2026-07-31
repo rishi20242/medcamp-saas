@@ -6,35 +6,24 @@ import bcrypt from "bcryptjs";
 
 // --- AUTH & STAFF MANAGEMENT ---
 
-export async function seedStaffAccounts() {
-  const existing = await prisma.staff.count();
-  if (existing > 0) return;
 
-  const passwordHash = await bcrypt.hash("password123", 10);
-
-  await prisma.staff.createMany({
-    data: [
-      { name: "Dr. Rishi MBBS", designation: "Chief Pediatrician", staffId: "DOC01", password: passwordHash, role: "DOCTOR" },
-      { name: "Nurse Joy", designation: "Head Triage Nurse", staffId: "NUR01", password: passwordHash, role: "NURSE" },
-      { name: "Pharm. Alice", designation: "Lead Pharmacist", staffId: "PHA01", password: passwordHash, role: "PHARMACIST" },
-    ]
-  });
-}
-
-export async function loginAction(staffId: string, password: string) {
-  await seedStaffAccounts(); // Ensure demo accounts exist
+export async function loginAction(staffId: string, password: string, campCode: string) {
   staffId = staffId.toUpperCase();
 
   if (!password || password.length < 8) {
     return { success: false, error: "Password must be at least 8 characters long." };
   }
-  const staff = await prisma.staff.findUnique({ where: { staffId } });
-  if (!staff) return { success: false, error: "Invalid credentials." };
+  const staff = await prisma.staff.findUnique({ 
+    where: { 
+      deploymentId_staffId: { deploymentId: campCode, staffId } 
+    } 
+  });
+  if (!staff) return { success: false, error: "Invalid credentials for this deployment." };
   
   const isValid = await bcrypt.compare(password, staff.password);
   if (!isValid) return { success: false, error: "Invalid credentials." };
 
-  cookies().set("staffId", staff.id, { httpOnly: true, path: "/" });
+  cookies().set("staffId", staff.id, { httpOnly: true, path: "/", maxAge: 86400 });
   return { success: true, role: staff.role };
 }
 
@@ -74,13 +63,17 @@ export async function initializeCampAction(formData: FormData) {
   }
 
   // Handle staff creation
+  const baseCode = institution.replace(/[^a-zA-Z0-9]/g, "").toUpperCase() || "CAMP";
+  const uniqueId = Math.random().toString(36).substring(2, 5).toUpperCase();
+  const generatedCampCode = `${baseCode}-${new Date().getFullYear()}-${uniqueId}`;
+
   if (staffDataStr) {
     const staffList = JSON.parse(staffDataStr);
     for (const staff of staffList) {
-      // Create or update to ensure unique staffIds
+      // Create or update to ensure unique staffIds per deployment
       const passwordHash = await bcrypt.hash(staff.password, 10);
       await prisma.staff.upsert({
-        where: { staffId: staff.staffId },
+        where: { deploymentId_staffId: { deploymentId: generatedCampCode, staffId: staff.staffId } },
         update: {
           name: staff.name,
           designation: staff.designation,
@@ -92,6 +85,7 @@ export async function initializeCampAction(formData: FormData) {
           name: staff.name,
           designation: staff.designation,
           staffId: staff.staffId,
+          deploymentId: generatedCampCode,
           password: passwordHash,
           role: staff.role,
           organizationId: org.id
@@ -105,10 +99,6 @@ export async function initializeCampAction(formData: FormData) {
     where: { status: "ACTIVE" },
     data: { status: "COMPLETED" }
   });
-
-  const baseCode = institution.replace(/[^a-zA-Z0-9]/g, "").toUpperCase() || "CAMP";
-  const uniqueId = Math.random().toString(36).substring(2, 5).toUpperCase();
-  const generatedCampCode = `${baseCode}-${new Date().getFullYear()}-${uniqueId}`;
 
   const newCamp = await prisma.campaign.create({
     data: {
@@ -225,7 +215,7 @@ export async function provisionMidCampStaffAction(formData: FormData) {
 
   const passwordHash = await bcrypt.hash(password, 10);
   await prisma.staff.upsert({
-    where: { staffId },
+    where: { deploymentId_staffId: { deploymentId: campCode, staffId } },
     update: {
       name,
       designation,
@@ -239,7 +229,8 @@ export async function provisionMidCampStaffAction(formData: FormData) {
       staffId,
       password: passwordHash,
       role,
-      organizationId: orgId
+      organizationId: orgId,
+      deploymentId: campCode
     }
   });
 
@@ -303,7 +294,7 @@ export async function registerPatientAction(campCode: string, formData: FormData
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 // 24 hours
+    maxAge: 86400
   });
 
   revalidatePath(`/${campCode}/register`);
@@ -408,12 +399,18 @@ export async function updateVitalsAction(campCode: string, tokenNumber: number, 
 export async function fetchDoctorQueue(campCode: string) {
   const patients = await prisma.patient.findMany({
     where: { 
-      status: "DOCTOR",
+      status: { in: ["DOCTOR", "DOCTOR_REFERRED_OUT_OF_STOCK"] },
       campaign: { campCode }
     },
     orderBy: { tokenNumber: "asc" },
   });
-  return patients;
+  
+  // Sort out-of-stock patients to the top
+  return patients.sort((a, b) => {
+    if (a.status === "DOCTOR_REFERRED_OUT_OF_STOCK" && b.status !== "DOCTOR_REFERRED_OUT_OF_STOCK") return -1;
+    if (b.status === "DOCTOR_REFERRED_OUT_OF_STOCK" && a.status !== "DOCTOR_REFERRED_OUT_OF_STOCK") return 1;
+    return 0;
+  });
 }
 
 export async function submitPrescriptionAction(patientId: string, clinicalData: { symptoms: string, diagnosis: string, medicines: any[] }) {
@@ -537,4 +534,21 @@ export async function checkPatientStatusAction() {
     tokenNumber: patient.tokenNumber,
     patientId: patient.id
   };
+}
+
+export async function markOutOfStockAction(patientId: string, note: string) {
+  const staff = await getSessionStaff();
+  if (!staff || staff.role !== "PHARMACIST") {
+    return { success: false, error: "Unauthorized" };
+  }
+  const updated = await prisma.patient.update({
+    where: { id: patientId },
+    data: {
+      status: "DOCTOR_REFERRED_OUT_OF_STOCK",
+      outOfStockNote: note
+    }
+  });
+  revalidatePath(`/${updated.campaignId}/pharmacy`);
+  revalidatePath(`/${updated.campaignId}/doctor`);
+  return { success: true };
 }

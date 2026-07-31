@@ -213,7 +213,7 @@ export default async function OrganizationDashboard({ params }: { params: { camp
               Active Terminals & Portals
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-              <Link href={`/${params.campCode}/register`} target="_blank" className="group">
+              <Link href={`/${params.campCode}/register?access=${activeCampaign.slugToken}`} target="_blank" className="group">
                 <div className="h-full bg-white dark:bg-neutral-900/60 p-8 rounded-3xl border border-slate-100 dark:border-neutral-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(79,70,229,0.1)] dark:hover:shadow-[0_8px_30px_rgba(79,70,229,0.2)] transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
                   <div className="w-12 h-12 bg-blue-50 dark:bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">

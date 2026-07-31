@@ -37,7 +37,20 @@ async function runTest() {
         staffId: `DOC-${campCode}`,
         password: passwordHash,
         role: "DOCTOR",
-        organizationId: org.id
+        organizationId: org.id,
+        deploymentId: campCode
+      }
+    });
+
+    const nurse = await prisma.staff.create({
+      data: {
+        name: "Nurse Test",
+        designation: "Head Triage",
+        staffId: `NUR-${campCode}`,
+        password: passwordHash,
+        role: "NURSE",
+        organizationId: org.id,
+        deploymentId: campCode
       }
     });
 
