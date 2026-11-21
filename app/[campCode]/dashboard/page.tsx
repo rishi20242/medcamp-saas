@@ -1,4 +1,5 @@
 import { getOrganizationOverviewAction, closeAndWipeCampAction } from "../../actions";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import CreateDeploymentModal from "./CreateDeploymentModal";
@@ -14,6 +15,11 @@ export default async function OrganizationDashboard({ params }: { params: { camp
 
   const totalPatients = org.campaigns.reduce((acc: number, camp: any) => acc + camp._count.patients, 0);
   const activeCampaign = org.campaigns.find((c: any) => c.status === "ACTIVE");
+  const samplePatient = activeCampaign ? await prisma.patient.findFirst({
+    where: { campaignId: activeCampaign.id, status: { in: ["COMPLETED", "PHARMACY"] } },
+    orderBy: { tokenNumber: "asc" }
+  }) : null;
+  const reportHref = samplePatient ? `/${params.campCode}/camp/report/${samplePatient.id}` : "/sample-report";
 
   const handleCloseCamp = async () => {
     "use server";
@@ -218,7 +224,7 @@ export default async function OrganizationDashboard({ params }: { params: { camp
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
               Active Terminals & Portals
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
               <Link href={`/${params.campCode}/register?access=${activeCampaign.slugToken}`} target="_blank" className="group">
                 <div className="h-full bg-white dark:bg-neutral-900/60 p-8 rounded-3xl border border-slate-100 dark:border-neutral-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(79,70,229,0.1)] dark:hover:shadow-[0_8px_30px_rgba(79,70,229,0.2)] transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
@@ -249,6 +255,17 @@ export default async function OrganizationDashboard({ params }: { params: { camp
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-3">Live Public Queue</h3>
                   <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">Dynamic, high-visibility public token monitor designed for large screens.</p>
+                </div>
+              </Link>
+
+              <Link href={reportHref} target="_blank" className="group">
+                <div className="h-full bg-white dark:bg-neutral-900/60 p-8 rounded-3xl border border-slate-100 dark:border-neutral-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(168,85,247,0.1)] dark:hover:shadow-[0_8px_30px_rgba(168,85,247,0.2)] transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-indigo-600 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                  <div className="w-12 h-12 bg-purple-50 dark:bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-3">Sample Medical Report</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">Official branded digital summary with an ink-saving A4 print engine.</p>
                 </div>
               </Link>
             </div>
