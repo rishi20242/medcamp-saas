@@ -359,9 +359,33 @@ Follow this step-by-step presentation script to showcase the platform smoothly a
 
 ---
 
-## 10. Instant Showcase Bypass Credentials
+## 10. Live Turnkey Demo Camp Credentials (One-Click Showcase)
 
-For instant demonstration without manual data entry:
+The repository includes a ready-to-use demo camp (`DEMO-2026`) pre-seeded with active staff and lively queues across all stations (Nurse, Doctor, Pharmacy, Live Queue Display, and Sample Medical Report):
+
+| Station / View | Direct URL / Path | Access Credentials |
+| :--- | :--- | :--- |
+| **Organization Dashboard** | `http://localhost:3000/DEMO-2026/dashboard` | Direct access (Overview of all stations & metrics) |
+| **Nurse Station** | `http://localhost:3000/DEMO-2026/nurse` | ID: `NUR01` \| Password: `MedCamp@2026` *(Tokens #104, #105 waiting)* |
+| **Doctor Station** | `http://localhost:3000/DEMO-2026/doctor` | ID: `DOC01` \| Password: `MedCamp@2026` *(Tokens #102, #103 waiting)* |
+| **Specialist Doctor** | `http://localhost:3000/DEMO-2026/doctor` | ID: `DOC02` \| Password: `MedCamp@2026` |
+| **Pharmacy Station** | `http://localhost:3000/DEMO-2026/pharmacy` | ID: `PHA01` \| Password: `MedCamp@2026` *(Token #101 waiting for pickup)* |
+| **Universal Staff Login** | `http://localhost:3000/DEMO-2026/login` | Camp Code: `DEMO-2026` |
+| **Live Queue TV Display** | `http://localhost:3000/DEMO-2026/display` | Live status across Nurse, Doctor, and Pharmacy |
+| **Patient Registration** | `http://localhost:3000/DEMO-2026/register` | Generate new tokens in real-time |
+| **Finished Sample Report** | `http://localhost:3000/DEMO-2026/camp/report/943adff5-0ee6-43e1-82a6-7a832286c0e8` | Patient: Vikram Malhotra (Token #100) |
+| **Patient Portal Lookup** | `http://localhost:3000/patient-portal` | Camp: `DEMO-2026` \| Phone: `9988776655` \| Token: `100` |
+
+> **To Re-Seed Demo Data Anytime:**
+> ```bash
+> npm run seed
+> ```
+
+---
+
+## 11. Mock Bypass Credentials (Offline / Emergency)
+
+For instant static demonstration without database lookup:
 
 | Setting | Value |
 | :--- | :--- |
@@ -373,7 +397,7 @@ For instant demonstration without manual data entry:
 
 ---
 
-## 11. Comprehensive Test Suite Matrix
+## 12. Comprehensive Test Suite Matrix
 
 The full 23-test-case verification matrix is maintained in:
 - Plain Text Format: [`TEST_CASES.txt`](file:///d:/MedComp/TEST_CASES.txt)
