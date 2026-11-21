@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -17,16 +17,21 @@ model Organization {
 
 model Campaign {
   id                    String       @id @default(uuid())
+  name                  String       @default("Medical Camp Deployment")
   organizationId        String
   organizingInstitution String
   chiefOrganizer        String
-  campCode              String
+  campCode              String       @unique
   slugToken             String       @unique @default(uuid())
   department            String
   date                  DateTime
   status                String       @default("INITIALIZING")
+  createdAt             DateTime     @default(now())
   organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   patients              Patient[]
+
+  @@index([organizationId])
+  @@index([status])
 }
 
 model Staff {
@@ -35,53 +40,64 @@ model Staff {
   deploymentId   String
   name           String
   designation    String
-  staffId        String         
+  staffId        String
   password       String
   role           String         // "DOCTOR", "NURSE", "PHARMACIST"
+  createdAt      DateTime       @default(now())
   organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   consultations  Consultation[]
   triaged        Patient[]      @relation("TriageNurse")
 
   @@unique([deploymentId, staffId])
+  @@index([organizationId])
+  @@index([deploymentId])
 }
 
 model Patient {
-  id            String         @id @default(uuid())
-  campaignId    String
-  name          String
-  age           Int
-  gender        String
-  bloodGroup    String?
-  phone         String?
-  height        Float?
-  weight        Float?
-  bloodPressure String?
-  pulse         Int?
-  tokenNumber   Int
+  id                 String         @id @default(uuid())
+  campaignId         String
+  name               String
+  age                Int
+  gender             String
+  bloodGroup         String?
+  phone              String?
+  height             Float?
+  weight             Float?
+  bloodPressure      String?
+  pulse              Int?
+  tokenNumber        Int
   status             String         @default("REGISTERED")
   triageNurseId      String?
   allergies          String?
   pastSurgeries      String?
   currentMedications String?
   outOfStockNote     String?
-  
+  createdAt          DateTime       @default(now())
+
   campaign      Campaign       @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  triageNurse   Staff?         @relation("TriageNurse", fields: [triageNurseId], references: [id])
+  triageNurse   Staff?         @relation("TriageNurse", fields: [triageNurseId], references: [id], onDelete: SetNull)
   consultations Consultation[]
 
   @@unique([campaignId, tokenNumber])
   @@unique([campaignId, phone])
+  @@index([campaignId, status])
+  @@index([status])
+  @@index([triageNurseId])
 }
 
 model Consultation {
-  id            String  @id @default(uuid())
+  id            String   @id @default(uuid())
   patientId     String
   doctorId      String?
-  doctorName    String  // Kept for fallback/historical reference
+  doctorName    String   // Kept for fallback/historical reference
   symptoms      String
   diagnosis     String
   prescriptions String
-  
-  patient       Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  doctor        Staff?  @relation(fields: [doctorId], references: [id])
+  createdAt     DateTime @default(now())
+
+  patient       Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctor        Staff?   @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+
+  @@index([patientId])
+  @@index([doctorId])
 }

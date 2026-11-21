@@ -3,7 +3,11 @@ import { useState } from "react";
 import { getPatientStatusAction } from "../../actions";
 import Link from "next/link";
 
+import { useParams } from "next/navigation";
+
 export default function PublicReportPage() {
+  const params = useParams();
+  const campCode = (params?.campCode as string) || "";
   const [identifier, setIdentifier] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [patientData, setPatientData] = useState<any>(null);
@@ -18,7 +22,7 @@ export default function PublicReportPage() {
     setPatientData(null);
 
     try {
-      const result = await getPatientStatusAction(identifier);
+      const result = await getPatientStatusAction(identifier, campCode);
       if (result) {
         if (result.status === "COMPLETED") {
           setPatientData(result);
@@ -192,7 +196,7 @@ export default function PublicReportPage() {
                             return meds.map((med: any, mIdx: number) => (
                               <tr key={mIdx} className="hover:bg-slate-50/50 transition-colors">
                                 <td className="py-0.5 px-3 text-center text-slate-400 font-medium text-[10px]">{mIdx + 1}</td>
-                                <td className="py-0.5 px-3 font-bold text-slate-800 text-[11px]">{med.name}</td>
+                                <td className="py-0.5 px-3 font-bold text-slate-800 text-[11px]">{med.name || med.medicine || "Medication"}</td>
                                 <td className="py-0.5 px-3 text-[10px]">
                                   <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-sm font-bold tracking-widest border border-slate-200 shadow-sm">{med.dosage}</span>
                                 </td>

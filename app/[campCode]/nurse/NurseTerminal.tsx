@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { fetchTriagePatient, updateVitalsAction, fetchNurseQueue } from "../../actions";
 import { useParams } from "next/navigation";
+import { AlertModal } from "../../components/UIModal";
 
 export default function NurseTriageTerminal() {
   const [searchToken, setSearchToken] = useState("");
@@ -12,6 +13,13 @@ export default function NurseTriageTerminal() {
   const [isSaving, setIsSaving] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
+  const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; message: string; type: "error" | "info" | "success" | "warning" }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info",
+  });
+
   const [queue, setQueue] = useState<any[]>([]);
 
   const [vitals, setVitals] = useState({
@@ -25,7 +33,6 @@ export default function NurseTriageTerminal() {
   const campCode = params.campCode as string;
 
   const isBpInvalid = vitals.bloodPressure.trim() !== "" && !/^\d{2,3}\/\d{2,3}$/.test(vitals.bloodPressure.trim());
-
 
   const refreshQueue = async () => {
     setIsRefreshing(true);
@@ -41,7 +48,9 @@ export default function NurseTriageTerminal() {
 
   useEffect(() => {
     refreshQueue();
-  }, []);
+    const interval = setInterval(refreshQueue, 5000);
+    return () => clearInterval(interval);
+  }, [campCode]);
 
   const selectPatientFromQueue = (patient: any) => {
     setSearchToken(patient.tokenNumber.toString());
@@ -58,22 +67,41 @@ export default function NurseTriageTerminal() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchToken.trim() !== "") {
-      setIsSearching(true);
-      try {
-        const patient = await fetchTriagePatient(campCode, parseInt(searchToken, 10));
-        if (patient) {
-          selectPatientFromQueue(patient);
-        } else {
-          alert("Patient not found or not in TRIAGE/REGISTERED status.");
-          setPatientFound(false);
-        }
-      } catch (error) {
-        console.error(error);
-        alert("Error fetching patient.");
-      } finally {
-        setIsSearching(false);
+    const token = parseInt(searchToken.trim(), 10);
+    if (isNaN(token)) {
+      setModalState({
+        isOpen: true,
+        title: "Input Validation",
+        message: "Please enter a valid numeric token number.",
+        type: "warning"
+      });
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const patient = await fetchTriagePatient(campCode, token);
+      if (patient) {
+        selectPatientFromQueue(patient);
+      } else {
+        setModalState({
+          isOpen: true,
+          title: "Patient Not Found",
+          message: `Token #${token} was not found or is no longer in REGISTERED/TRIAGE status.`,
+          type: "info"
+        });
+        setPatientFound(false);
       }
+    } catch (error) {
+      console.error(error);
+      setModalState({
+        isOpen: true,
+        title: "Lookup Error",
+        message: "Unable to retrieve patient data. Please retry.",
+        type: "error"
+      });
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -82,14 +110,37 @@ export default function NurseTriageTerminal() {
   };
 
   const handleSaveVitals = async () => {
+    if (!patientData?.tokenNumber) {
+      setModalState({
+        isOpen: true,
+        title: "Selection Required",
+        message: "Please select an active patient from the queue or search by token first.",
+        type: "warning"
+      });
+      return;
+    }
     setIsSaving(true);
     try {
-      await updateVitalsAction(campCode, parseInt(searchToken, 10), vitals);
-      setVitalsSaved(true);
-      refreshQueue(); // Refresh the queue to remove the processed patient
+      const res = await updateVitalsAction(campCode, patientData.tokenNumber, vitals);
+      if (res && res.success) {
+        setVitalsSaved(true);
+        refreshQueue();
+      } else {
+        setModalState({
+          isOpen: true,
+          title: "Action Notice",
+          message: res?.error || "Failed to save vitals.",
+          type: "error"
+        });
+      }
     } catch (error) {
       console.error(error);
-      alert("Failed to save vitals.");
+      setModalState({
+        isOpen: true,
+        title: "System Error",
+        message: "Failed to save vitals due to an unexpected error.",
+        type: "error"
+      });
     } finally {
       setIsSaving(false);
     }
@@ -97,6 +148,13 @@ export default function NurseTriageTerminal() {
 
   return (
     <div className="flex flex-row h-[85vh] max-w-7xl mx-auto gap-6 transition-colors">
+      <AlertModal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        title={modalState.title}
+        message={modalState.message}
+        type={modalState.type}
+      />
       
       {/* Sidebar Queue */}
       <div className="w-1/3 bg-white/60 dark:bg-slate-950/80 backdrop-blur-xl border border-white dark:border-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.03)] flex flex-col overflow-hidden transition-colors">
@@ -104,7 +162,12 @@ export default function NurseTriageTerminal() {
           <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
             Active Registration Queue
           </h2>
-          <button onClick={refreshQueue} disabled={isRefreshing} className="text-white hover:text-amber-100 transition-colors disabled:opacity-50">
+          <button 
+            onClick={refreshQueue} 
+            disabled={isRefreshing} 
+            aria-label="Refresh Queue"
+            className="text-white hover:text-amber-100 transition-colors disabled:opacity-50"
+          >
             <svg className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
           </button>
         </div>
@@ -145,7 +208,7 @@ export default function NurseTriageTerminal() {
               <svg className="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
             </div>
             Triage & Vitals Counter
-            <button onClick={refreshQueue} disabled={isRefreshing} type="button" className="ml-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 p-2 rounded-xl transition-colors border border-slate-200 dark:border-slate-600 shadow-sm disabled:opacity-50" title="Refresh Latest Data">
+            <button onClick={refreshQueue} disabled={isRefreshing} type="button" className="ml-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 p-2 rounded-xl transition-colors border border-slate-200 dark:border-slate-600 shadow-sm disabled:opacity-50" title="Refresh Latest Data" aria-label="Refresh Data">
               <svg className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
             </button>
           </h2>
@@ -156,8 +219,9 @@ export default function NurseTriageTerminal() {
           <div className="max-w-2xl mx-auto bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 mb-8 transition-colors">
             <form onSubmit={handleSearch} className="flex gap-4">
               <div className="flex-grow">
-                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Search Patient by Token</label>
+                <label htmlFor="search-patient-token" className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Search Patient by Token</label>
                 <input 
+                  id="search-patient-token"
                   type="text" 
                   value={searchToken}
                   onChange={(e) => setSearchToken(e.target.value)}
@@ -205,8 +269,9 @@ export default function NurseTriageTerminal() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Height (cm)</label>
+                      <label htmlFor="vital-height" className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Height (cm)</label>
                       <input 
+                        id="vital-height"
                         type="number" 
                         name="height"
                         value={vitals.height}
@@ -216,8 +281,9 @@ export default function NurseTriageTerminal() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Weight (kg)</label>
+                      <label htmlFor="vital-weight" className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Weight (kg)</label>
                       <input 
+                        id="vital-weight"
                         type="number" 
                         name="weight"
                         value={vitals.weight}
@@ -227,8 +293,9 @@ export default function NurseTriageTerminal() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Blood Pressure (mmHg)</label>
+                      <label htmlFor="vital-bp" className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Blood Pressure (mmHg)</label>
                       <input 
+                        id="vital-bp"
                         type="text" 
                         name="bloodPressure"
                         value={vitals.bloodPressure}
@@ -239,8 +306,9 @@ export default function NurseTriageTerminal() {
                       {isBpInvalid && <p className="text-red-500 text-xs font-bold mt-1">Enter BP in valid format (e.g., 120/80)</p>}
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Pulse (bpm)</label>
+                      <label htmlFor="vital-pulse" className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Pulse (bpm)</label>
                       <input 
+                        id="vital-pulse"
                         type="number" 
                         name="pulse"
                         value={vitals.pulse}

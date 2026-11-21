@@ -1,8 +1,6 @@
 import { cookies } from "next/headers";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import RegisterClient from "./RegisterClient";
-
-const prisma = new PrismaClient();
 
 export default async function RegisterPageServer({ 
   params,
@@ -16,11 +14,27 @@ export default async function RegisterPageServer({
   const hasAccessCookie = cookieStore.get(`access_${params.campCode}`)?.value === "granted";
 
   const campaign = await prisma.campaign.findFirst({
-    where: { campCode: params.campCode, status: "ACTIVE" }
+    where: { campCode: params.campCode }
   });
 
   if (!campaign) {
-    return <div className="p-10 text-center text-red-500 font-bold">Campaign not active.</div>;
+    return <div className="p-10 text-center text-red-500 font-bold">Campaign not found.</div>;
+  }
+
+  if (campaign.status === "INACTIVE") {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center p-6 text-center">
+        <div className="bg-white dark:bg-slate-800 p-10 rounded-[2rem] shadow-2xl border border-rose-200 dark:border-rose-900/30 max-w-md w-full">
+          <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-3xl mx-auto flex items-center justify-center mb-6 ring-4 ring-rose-50 dark:ring-rose-900/20">
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+          </div>
+          <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 mb-3">Deployment Inactive</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed">
+            This medical camp deployment is currently closed or suspended by the organizer. Registration is unavailable.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   // QR Gatekeeper Logic

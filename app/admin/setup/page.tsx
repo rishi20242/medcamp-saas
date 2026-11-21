@@ -2,10 +2,18 @@
 import { useState } from "react";
 import { initializeCampAction } from "../../actions";
 import { useRouter } from "next/navigation";
+import { AlertModal } from "../../components/UIModal";
 
 export default function AdminSetupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deployedCamp, setDeployedCamp] = useState<{campCode: string} | null>(null);
+  const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; message: string; type: "error" | "info" | "success" | "warning" }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info",
+  });
+  const [copiedCode, setCopiedCode] = useState(false);
   const router = useRouter();
 
   const [staffList, setStaffList] = useState([
@@ -41,11 +49,21 @@ export default function AdminSetupPage() {
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])/;
     for (const staff of staffList) {
       if (staff.password.length < 8) {
-        alert(`Password for ${staff.name || "staff"} must be at least 8 characters long.`);
+        setModalState({
+          isOpen: true,
+          title: "Password Policy Error",
+          message: `Password for ${staff.name || staff.role} must be at least 8 characters long.`,
+          type: "warning"
+        });
         return;
       }
       if (!passwordRegex.test(staff.password)) {
-        alert(`Password for ${staff.name || "staff"} must contain both letters and numbers.`);
+        setModalState({
+          isOpen: true,
+          title: "Password Complexity Required",
+          message: `Password for ${staff.name || staff.role} must contain both letters and numbers.`,
+          type: "warning"
+        });
         return;
       }
     }
@@ -59,7 +77,12 @@ export default function AdminSetupPage() {
       setDeployedCamp(result);
     } catch (error) {
       console.error(error);
-      alert("Failed to initialize camp.");
+      setModalState({
+        isOpen: true,
+        title: "Setup Interruption",
+        message: "Failed to initialize camp infrastructure. Please verify details and retry.",
+        type: "error"
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -77,23 +100,24 @@ export default function AdminSetupPage() {
           
           <div className="bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 mb-10 shadow-inner">
             <div className="flex flex-col items-center gap-4">
-              <div className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-violet-400 tracking-tighter drop-shadow-sm">
+              <div className="text-4xl md:text-5xl lg:text-6xl break-all font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-violet-400 tracking-tighter drop-shadow-sm px-4 text-center leading-tight">
                 {deployedCamp.campCode}
               </div>
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(deployedCamp.campCode);
-                  alert("Camp Code copied to clipboard!");
+                  setCopiedCode(true);
+                  setTimeout(() => setCopiedCode(false), 3000);
                 }}
                 className="bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors border border-indigo-500/30"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                Copy Code
+                {copiedCode ? "Copied to Clipboard!" : "Copy Code"}
               </button>
             </div>
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-6 bg-slate-100 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-center gap-2">
-              <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-              Important: Distribute this code to your staff and patients.
+              <svg className="w-5 h-5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              <span>Important: Distribute this code to your staff and patients. This code is generated once and will not be accessible again.</span>
             </p>
           </div>
           
@@ -111,6 +135,14 @@ export default function AdminSetupPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center p-4 py-12 relative font-['Outfit'] transition-colors">
+      <AlertModal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        title={modalState.title}
+        message={modalState.message}
+        type={modalState.type}
+      />
+
       <div className="max-w-4xl w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-10 shadow-2xl">
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-500/30">
@@ -121,14 +153,16 @@ export default function AdminSetupPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-10">
-          
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">Institution Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Organizing Hospital / Medical College <span className="text-red-500 dark:text-red-400">*</span></label>
+                <label htmlFor="organizingInstitution" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                  Organizing Hospital / Medical College <span className="text-red-500 dark:text-red-400">*</span>
+                </label>
                 <input 
                   type="text" 
+                  id="organizingInstitution"
                   name="organizingInstitution"
                   required
                   placeholder="e.g. Apollo Medical College"
@@ -137,9 +171,12 @@ export default function AdminSetupPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Chief Organizer Name & Title <span className="text-red-500 dark:text-red-400">*</span></label>
+                <label htmlFor="chiefOrganizer" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                  Chief Organizer Name & Title <span className="text-red-500 dark:text-red-400">*</span>
+                </label>
                 <input 
                   type="text" 
+                  id="chiefOrganizer"
                   name="chiefOrganizer"
                   required
                   placeholder="e.g. Dr. A. Sharma, Dean"
@@ -148,9 +185,12 @@ export default function AdminSetupPage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Camp Department <span className="text-red-500 dark:text-red-400">*</span></label>
+                <label htmlFor="department" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                  Camp Department <span className="text-red-500 dark:text-red-400">*</span>
+                </label>
                 <div className="relative">
                   <select 
+                    id="department"
                     name="department"
                     required
                     defaultValue="General Medicine"
@@ -192,6 +232,7 @@ export default function AdminSetupPage() {
                       type="button" 
                       onClick={() => removeStaffRow(idx)}
                       className="absolute -top-3 -right-3 bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white rounded-full p-1.5 transition-colors border border-red-500/30"
+                      aria-label="Remove staff"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
@@ -199,8 +240,9 @@ export default function AdminSetupPage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Role</label>
+                      <label htmlFor={`staff-role-${idx}`} className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Role</label>
                       <select 
+                        id={`staff-role-${idx}`}
                         value={staff.role}
                         onChange={(e) => handleStaffChange(idx, "role", e.target.value)}
                         className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors"
@@ -211,9 +253,10 @@ export default function AdminSetupPage() {
                       </select>
                     </div>
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
+                      <label htmlFor={`staff-name-${idx}`} className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
                       <input 
                         type="text" 
+                        id={`staff-name-${idx}`}
                         required
                         value={staff.name}
                         onChange={(e) => handleStaffChange(idx, "name", e.target.value)}
@@ -222,8 +265,9 @@ export default function AdminSetupPage() {
                       />
                     </div>
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Designation</label>
+                      <label htmlFor={`staff-designation-${idx}`} className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Designation</label>
                       <select 
+                        id={`staff-designation-${idx}`}
                         required
                         value={staff.designation}
                         onChange={(e) => handleStaffChange(idx, "designation", e.target.value)}
@@ -256,9 +300,10 @@ export default function AdminSetupPage() {
                       </select>
                     </div>
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Staff ID</label>
+                      <label htmlFor={`staff-id-${idx}`} className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Staff ID</label>
                       <input 
                         type="text" 
+                        id={`staff-id-${idx}`}
                         required
                         value={staff.staffId}
                         onChange={(e) => handleStaffChange(idx, "staffId", e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
@@ -267,9 +312,10 @@ export default function AdminSetupPage() {
                       />
                     </div>
                     <div className="md:col-span-1">
-                      <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
+                      <label htmlFor={`staff-password-${idx}`} className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
                       <input 
                         type="password" 
+                        id={`staff-password-${idx}`}
                         required
                         value={staff.password}
                         onChange={(e) => handleStaffChange(idx, "password", e.target.value)}

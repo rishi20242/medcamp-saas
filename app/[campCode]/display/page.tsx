@@ -30,7 +30,7 @@ export default function PublicDisplay() {
     loadData();
     const interval = setInterval(loadData, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [campCode]);
 
   const nurseTokens = nurseQueue.slice(0, 9);
   const doctorTokens = doctorQueue.slice(0, 9);

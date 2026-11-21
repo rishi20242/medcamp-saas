@@ -9,6 +9,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        outfit: ["Outfit", "sans-serif"],
+        sans: ["Outfit", "sans-serif"],
+      },
       animation: {
         blob: "blob 7s infinite",
       },

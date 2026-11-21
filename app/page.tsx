@@ -57,9 +57,9 @@ export default function GlobalLandingPage() {
               </button>
             </form>
             <div className="flex items-center gap-4 text-slate-500 text-sm font-semibold uppercase tracking-widest my-4">
-              <span className="flex-1 h-px bg-slate-800"></span>
+              <span className="flex-1 h-px bg-slate-200 dark:bg-slate-700"></span>
               OR
-              <span className="flex-1 h-px bg-slate-800"></span>
+              <span className="flex-1 h-px bg-slate-200 dark:bg-slate-700"></span>
             </div>
             <Link href="/admin/setup" className="block w-full text-center bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 px-6 py-4 rounded-xl font-black transition-all shadow-xl shadow-slate-900/5 dark:shadow-white/5">
               Launch New Camp
@@ -80,6 +80,21 @@ export default function GlobalLandingPage() {
           </Link>
         </div>
 
+      </div>
+
+      {/* QR Code Information Box */}
+      <div className="z-10 mt-8 w-full max-w-5xl">
+        <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-center gap-6 shadow-lg shadow-indigo-500/5">
+          <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 rounded-2xl flex items-center justify-center shrink-0">
+            <svg className="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+            </svg>
+          </div>
+          <div className="text-center md:text-left">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Patient Registration</h3>
+            <p className="text-slate-600 dark:text-slate-400 font-medium">To access the patient portal or register for a camp, please <strong className="text-indigo-600 dark:text-indigo-400">scan the QR code</strong> displayed physically at your medical camp location.</p>
+          </div>
+        </div>
       </div>
     </div>
   );

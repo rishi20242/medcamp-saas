@@ -1,6 +1,8 @@
 import { getOrganizationOverviewAction, closeAndWipeCampAction } from "../../actions";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import CreateDeploymentModal from "./CreateDeploymentModal";
+import DeploymentToggle from "./DeploymentToggle";
 import DynamicStaffForm from "../../DynamicStaffForm";
 
 export default async function OrganizationDashboard({ params }: { params: { campCode: string } }) {
@@ -26,9 +28,7 @@ export default async function OrganizationDashboard({ params }: { params: { camp
       <div className="bg-slate-900 pb-24 pt-8 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-end items-center mb-10 gap-3">
-              <Link href="/admin/setup" className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-bold border border-white/20 transition-all backdrop-blur-md">
-                Configure New Camp
-              </Link>
+              <CreateDeploymentModal orgId={org.id} />
               {activeCampaign && (
                 <form action={handleCloseCamp}>
                   <button type="submit" className="bg-red-500/20 hover:bg-red-500/80 text-red-100 hover:text-white px-4 py-2 rounded-xl text-sm font-bold border border-red-500/30 transition-all backdrop-blur-md">
@@ -135,14 +135,20 @@ export default async function OrganizationDashboard({ params }: { params: { camp
                         </td>
                         <td className="p-4 pr-6 text-right">
                           {camp.status === "ACTIVE" ? (
-                            <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border border-emerald-100 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                              Active
-                            </span>
+                            <div className="flex flex-col items-end gap-2">
+                              <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Active
+                              </span>
+                              <DeploymentToggle deploymentId={camp.id} initialStatus={camp.status} />
+                            </div>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                              Completed
-                            </span>
+                            <div className="flex flex-col items-end gap-2">
+                              <span className="inline-flex items-center gap-1.5 bg-rose-500/10 text-rose-500 border border-rose-500/20 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                                Inactive
+                              </span>
+                              <DeploymentToggle deploymentId={camp.id} initialStatus={camp.status} />
+                            </div>
                           )}
                         </td>
                       </tr>

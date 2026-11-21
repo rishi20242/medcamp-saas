@@ -16,14 +16,7 @@
   --foreground: #0f172a; /* slate-900 */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
 }

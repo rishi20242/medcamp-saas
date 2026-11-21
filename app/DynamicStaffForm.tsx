@@ -2,39 +2,70 @@
 import { useState } from "react";
 import { provisionMidCampStaffAction } from "./actions";
 import { useParams } from "next/navigation";
+import { AlertModal } from "./components/UIModal";
 
 export default function DynamicStaffForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; message: string; type: "error" | "info" | "success" | "warning" }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info",
+  });
   const params = useParams();
   const campCode = params.campCode as string;
   const [role, setRole] = useState("DOCTOR");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     setIsSubmitting(true);
     
     try {
-      const formData = new FormData(e.currentTarget);
-      formData.append("campCode", campCode);
-      const password = formData.get("password") as string;
+      const formData = new FormData(form);
+      if (campCode) {
+        formData.append("campCode", campCode);
+      }
+      const password = (formData.get("password") as string) || "";
       const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])/;
       
       if (password.length < 8 || !passwordRegex.test(password)) {
-        alert("Password must be at least 8 characters long and contain both letters and numbers.");
+        setModalState({
+          isOpen: true,
+          title: "Password Requirements",
+          message: "Password must be at least 8 characters long and contain both letters and numbers.",
+          type: "warning"
+        });
         setIsSubmitting(false);
         return;
       }
 
       const res = await provisionMidCampStaffAction(formData);
       if (!res.success) {
-        alert(res.error || "Failed to provision staff");
+        setModalState({
+          isOpen: true,
+          title: "Provisioning Notice",
+          message: res.error || "Failed to provision staff member.",
+          type: "error"
+        });
       } else {
-        alert("Staff successfully provisioned!");
-        (e.target as HTMLFormElement).reset();
+        setModalState({
+          isOpen: true,
+          title: "Staff Provisioned",
+          message: "Staff member has been successfully provisioned for this camp.",
+          type: "success"
+        });
+        form.reset();
+        setRole("DOCTOR");
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to provision staff.");
+      setModalState({
+        isOpen: true,
+        title: "System Error",
+        message: "Failed to provision staff member. Please check logs.",
+        type: "error"
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -42,6 +73,14 @@ export default function DynamicStaffForm() {
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none overflow-hidden flex flex-col p-6 mt-8 transition-colors">
+      <AlertModal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        title={modalState.title}
+        message={modalState.message}
+        type={modalState.type}
+      />
+
       <div className="border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
         <h2 className="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
           <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
@@ -53,8 +92,9 @@ export default function DynamicStaffForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Role</label>
+            <label htmlFor="dynamic-staff-role" className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Role</label>
             <select 
+              id="dynamic-staff-role"
               name="role" 
               required 
               value={role}
@@ -67,16 +107,31 @@ export default function DynamicStaffForm() {
             </select>
           </div>
           <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
-            <input type="text" name="name" required placeholder="Dr. Jane Doe" className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
-          </div>
-          <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Designation</label>
-            <input type="text" name="designation" required placeholder="Senior Specialist" className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
-          </div>
-          <div>
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Staff ID (Login ID)</label>
+            <label htmlFor="dynamic-staff-name" className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
             <input 
+              id="dynamic-staff-name"
+              type="text" 
+              name="name" 
+              required 
+              placeholder="Dr. Jane Doe" 
+              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" 
+            />
+          </div>
+          <div>
+            <label htmlFor="dynamic-staff-designation" className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Designation</label>
+            <input 
+              id="dynamic-staff-designation"
+              type="text" 
+              name="designation" 
+              required 
+              placeholder="Senior Specialist" 
+              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" 
+            />
+          </div>
+          <div>
+            <label htmlFor="dynamic-staff-id" className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Staff ID (Login ID)</label>
+            <input 
+              id="dynamic-staff-id"
               type="text" 
               name="staffId" 
               required 
@@ -85,8 +140,15 @@ export default function DynamicStaffForm() {
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
-            <input type="password" name="password" required placeholder="Min 8 chars, Letters & Numbers" className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
+            <label htmlFor="dynamic-staff-password" className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
+            <input 
+              id="dynamic-staff-password"
+              type="password" 
+              name="password" 
+              required 
+              placeholder="Min 8 chars, Letters & Numbers" 
+              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" 
+            />
           </div>
         </div>
 
